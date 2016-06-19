@@ -1,12 +1,9 @@
 'use strict'
 const app = require('express')()
 const morgan = require('morgan')
+const config = require('./config')
+const factory = require('./application')
+const port = 8080
 
 app.use(morgan('dev'))
-
-app.use((req, res) => {
-  res.send("Hello World!")
-})
-
-const port = 8080
-app.listen(port, () => console.log(`Running on port ${port}\n`))
+factory(app, port)(config)
