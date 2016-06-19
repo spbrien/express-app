@@ -1,0 +1,26 @@
+{
+    "extends": "airbnb-base",
+    "parser": "babel-eslint",
+    "plugins": [
+        "html",
+    ],
+    "settings": {
+      "html/report-bad-indent": 2,
+    },
+    "parserOptions": {
+        "ecmaVersion": 6,
+        "sourceType": "module",
+    },
+    "rules": {
+        "semi": [2, "never"],
+        "no-underscore-dangle": 0,
+        "arrow-body-style": 0,
+        "no-param-reassign": 0,
+        "prefer-arrow-callback": 2,
+        "radix": 0,
+        "func-names": 0,
+        "camelcase": 0,
+        "vars-on-top": 0,
+        "max-len": [2, 150]
+    }
+}
