@@ -1,13 +1,11 @@
-// const routing = require('./routing')
+const routing = require('./routing')
 const R = require('ramda')
 
 function factory(app, port) {
   return (config) => {
     // Create Schema Routes
     R.map(model => {
-      app.get(`/api/v1/${model.name}`, (req, res) => {
-        res.send(model._schema)
-      })
+      app.use( '/api/v1', routing(model.name, model._schema));
     }, config.schema)
   
     // Listen
