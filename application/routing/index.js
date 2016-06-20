@@ -3,6 +3,9 @@ const router = express.Router();
 const bodyParser = require('body-parser')
 
 function register(name, schema) {
+
+  // Parse Schema and Create Mongo Layer
+
   // Register Resource Routes
   router
     .get(`/${name}`, (req, res) => {
@@ -21,6 +24,7 @@ function register(name, schema) {
     .patch(`/${name}/:id`, (req, res) => {
       res.send(`Patching ${name}/${req.params.id}`)
     })
+
   // Register Schema Route
   router
     .get(`/info/${name}`, (req, res) => {
