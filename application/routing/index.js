@@ -1,13 +1,9 @@
 const express = require('express')
 const router = express.Router();
-const bodyParser = require('body-parser')
-const parseSchema = require('./parseSchema')
-const buildQuery - require('./buildQuery')
 
 function register(name, schema) {
 
   // Parse Schema and Create Mongo Layer
-  model = parseSchema(name, schema)
 
   // Register Resource Routes
   router
