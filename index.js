@@ -1,4 +1,5 @@
 'use strict'
+require('dotenv').load()
 
 // Modules
 const app = require('express')()
@@ -8,7 +9,7 @@ const factory = require('./application')
 const bodyParser = require('body-parser')
 
 // Settings
-const port = 8080
+const port = 3000
 
 // Init Logging etc.
 app.use(morgan('dev'))

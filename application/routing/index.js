@@ -1,35 +1,33 @@
 const express = require('express')
 const router = express.Router();
 
-function register(name, schema) {
-
-  // Parse Schema and Create Mongo Layer
-
-  // Register Resource Routes
+function routing(schema) {
   router
-    .get(`/${name}`, (req, res) => {
-      res.send(`Getting ${name}`)
-    })
-    .get(`/${name}/:id`, (req, res) => {
-      res.send(`Getting ${name}/${req.params.id}`)
-    })
-    .post(`/${name}`, (req, res) => {
-      res.send(`Posting ${name}`)
-    })
-    .put(`/${name}/:id`, (req, res) => {
-      res.send(`Putting ${name}/${req.params.id}`)
-    })
-    .patch(`/${name}/:id`, (req, res) => {
-      res.send(`Patching ${name}/${req.params.id}`)
-    })
-
-  // Register Schema Route
-  router
-    .get(`/info/${name}`, (req, res) => {
+    .get('/info', (req, res) => {
       res.send(schema)
     })
-
+    .get('/info/:name', (req, res) => {
+      res.send(schema[req.params.name])
+    })
+    .get('/:name', (req, res) => {
+      req.db.find(req.params.name)
+      .then((results) => {
+        res.send(results)
+      })
+    })
+    .get('/:name/:id', (req, res) => {
+      res.send(req.params)
+    })
+    .post('/:name', (req, res) => {
+      res.send(req.params)
+    })
+    .put('/:name/:id', (req, res) => {
+      res.send(req.params)
+    })
+    .patch('/:name/:id', (req, res) => {
+      res.send(req.params)
+    })
   return router
 }
 
-module.exports = register
+module.exports = routing

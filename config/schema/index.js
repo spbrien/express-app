@@ -11,11 +11,10 @@ inflection.lowerize = function (str) {
 module.exports = fs
   .readdirSync(__dirname)
   .filter(file => (file.indexOf('.') !== 0) && (file !== 'index.js'))
-  .map((file) => {
+  .reduce((models, file) => {
     let ext = path.extname(file);
     let fileWithoutExt = file.slice(0, -ext.length);
     let resourceName = inflection.transform(fileWithoutExt, ['pluralize', 'camelize', 'lowerize']);
-    let model = require(path.join(__dirname, fileWithoutExt));
-    model.name = resourceName
-    return model;
-  });
+    models[resourceName] = require(path.join(__dirname, fileWithoutExt));
+    return models;
+  }, {});
