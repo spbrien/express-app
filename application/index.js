@@ -1,5 +1,4 @@
 const routing = require('./routing')
-const R = require('ramda')
 
 function factory(app, port) {
   return (config) => {
@@ -13,6 +12,7 @@ function factory(app, port) {
     app.use(config.db.closeConnection)
 
     // Listen
+     /* eslint-disable no-console */
     app.listen(port, () => console.log(`Running on port ${port}\n`))
   }
 }

@@ -1,4 +1,3 @@
-'use strict'
 
 const _schema = {
   title: {
@@ -8,7 +7,7 @@ const _schema = {
       maxlength: 100,
       required: false,
       choices: ['Post Title', 'Post Title Two'],
-    }
+    },
   },
 }
 
