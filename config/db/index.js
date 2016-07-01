@@ -6,10 +6,12 @@ const dbConfig = {
   db: process.env.DB_NAME,
 }
 
+
 function createConnection(req, res, next) {
   r.connect(dbConfig)
   .then((connection) => {
     req.connection = connection
+    exports.connection = connection
     req.db = {
       find(tableName) {
         return r.table(tableName).run(connection)
@@ -20,6 +22,7 @@ function createConnection(req, res, next) {
   })
 }
 
+
 function closeConnection(req, res, next) {
   req.connection.close()
   next()
@@ -28,4 +31,6 @@ function closeConnection(req, res, next) {
 module.exports = {
   createConnection,
   closeConnection,
+  dbConfig,
+
 }

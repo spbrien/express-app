@@ -21,6 +21,8 @@
         "func-names": 0,
         "camelcase": 0,
         "vars-on-top": 0,
-        "max-len": [2, 150]
+        "max-len": [2, 150],
+        "no-console": 0,
+        "no-shadow": 0,
     }
 }

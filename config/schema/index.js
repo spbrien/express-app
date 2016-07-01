@@ -1,7 +1,10 @@
-/* eslint-disable global-require */
+/* eslint-disable global-require, no-shadow */
 const fs = require('fs')
 const path = require('path')
 const inflection = require('inflection')
+const config = require('../db/').dbConfig
+const utils = require('../db/utils')
+
 inflection.lowerize = function (str) {
   return str.substring(0, 1).toLowerCase() + str.substring(1)
 }
@@ -14,6 +17,9 @@ module.exports = fs
     const ext = path.extname(file)
     const fileWithoutExt = file.slice(0, -ext.length)
     const resourceName = inflection.transform(fileWithoutExt, ['pluralize', 'camelize', 'lowerize'])
+    // create table for model
+    utils.createTable(config, resourceName)
+  /*  */
     models[resourceName] = require(path.join(__dirname, fileWithoutExt))
     return models
   }, {})
