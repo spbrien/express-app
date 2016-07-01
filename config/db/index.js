@@ -9,6 +9,7 @@ const dbConfig = {
 function createConnection(req, res, next) {
   r.connect(dbConfig)
   .then((connection) => {
+    req.connection = connection
     req.db = {
       find(tableName) {
         return r.table(tableName).run(connection)
@@ -21,7 +22,7 @@ function createConnection(req, res, next) {
 
 function closeConnection(req, res, next) {
   req.connection.close()
-  req.next()
+  next()
 }
 
 module.exports = {
