@@ -11,7 +11,6 @@ function createConnection(req, res, next) {
   r.connect(dbConfig)
   .then((connection) => {
     req.connection = connection
-    exports.connection = connection
     req.db = {
       find(tableName) {
         return r.table(tableName).run(connection)
