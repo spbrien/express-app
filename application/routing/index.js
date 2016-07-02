@@ -17,12 +17,15 @@ function routing(schema) {
       })
     })
     .get('/:name/:id', (req, res) => {
-      res.send(req.params)
+      const { params, db } = req
+      db.find(params.name, params.id).then(results => {
+        res.send(results)
+      }, err => res.send(err))
     })
     .post('/:name', (req, res) => {
       const { body, db, params } = req
       db.insert(params.name, body)
-      .then(data => res.send(data))
+      .then(data => res.send(data), err => res.send(err))
     })
     .put('/:name/:id', (req, res) => {
       res.send(req.params)

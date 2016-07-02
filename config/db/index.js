@@ -12,7 +12,12 @@ function createConnection(req, res, next) {
   .then((connection) => {
     req.connection = connection
     req.db = {
-      find(tableName) {
+      find(tableName, id) {
+        console.log(tableName, id)
+        if (id) {
+          return r.table(tableName).filter({ id: parseInt(id) }).run(connection)
+          .then(result => result.toArray())
+        }
         return r.table(tableName).run(connection)
         .then(result => result.toArray())
       },
