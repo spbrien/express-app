@@ -1,6 +1,7 @@
 const express = require('express')
 const router = new express.Router()
 
+
 function routing(schema) {
   router
     .get('/info', (req, res) => {
@@ -19,7 +20,9 @@ function routing(schema) {
       res.send(req.params)
     })
     .post('/:name', (req, res) => {
-      res.send(req.params)
+      const { body, db, params } = req
+      db.insert(params.name, body)
+      .then(data => res.send(data))
     })
     .put('/:name/:id', (req, res) => {
       res.send(req.params)

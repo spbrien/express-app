@@ -16,6 +16,9 @@ function createConnection(req, res, next) {
         return r.table(tableName).run(connection)
         .then(result => result.toArray())
       },
+      insert(tableName, data) {
+        return r.table(tableName).insert(data).run(connection)
+      },
     }
     next()
   })

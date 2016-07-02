@@ -29,7 +29,6 @@ function checkTables(name, cb) {
 function createTable(config, name) {
   checkTables(name, (exists, connection) => {
     if (exists) {
-      console.log('table already exists')
       return false
     }
     r.db(config.db).tableCreate(name).run(connection)
@@ -41,6 +40,14 @@ function createTable(config, name) {
   })
 }
 
+function insert(name, data, connection, cb) {
+  r.table(name).insert(data).run(connection, (err, result) => {
+    if (err) throw err
+    return cb(result)
+  })
+}
+
 module.exports = {
   createTable,
+  insert,
 }
