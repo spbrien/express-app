@@ -28,7 +28,9 @@ function routing(schema) {
       .then(data => res.send(data), err => res.send(err))
     })
     .put('/:name/:id', (req, res) => {
-      res.send(req.params)
+      const { body, db, params } = req
+      db.replace(params.name, params.id, body)
+      .then(data => res.send(data), err => res.send(err))
     })
     .patch('/:name/:id', (req, res) => {
       const { body, db, params } = req

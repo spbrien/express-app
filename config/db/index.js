@@ -27,6 +27,10 @@ function createConnection(req, res, next) {
         return r.table(tableName).get(parseInt(id)).update(data)
         .run(connection)
       },
+      replace(tableName, id, data) {
+        return r.table(tableName).get(parseInt(id)).replace(data)
+        .run(connection)
+      },
     }
     next()
   })
