@@ -1,5 +1,6 @@
 const express = require('express')
-const router = express.Router();
+const router = new express.Router()
+
 
 function routing(schema) {
   router
@@ -16,16 +17,25 @@ function routing(schema) {
       })
     })
     .get('/:name/:id', (req, res) => {
-      res.send(req.params)
+      const { params, db } = req
+      db.find(params.name, params.id).then(results => {
+        res.send(results)
+      }, err => res.send(err))
     })
     .post('/:name', (req, res) => {
-      res.send(req.params)
+      const { body, db, params } = req
+      db.insert(params.name, body)
+      .then(data => res.send(data), err => res.send(err))
     })
     .put('/:name/:id', (req, res) => {
-      res.send(req.params)
+      const { body, db, params } = req
+      db.replace(params.name, params.id, body)
+      .then(data => res.send(data), err => res.send(err))
     })
     .patch('/:name/:id', (req, res) => {
-      res.send(req.params)
+      const { body, db, params } = req
+      db.update(params.name, params.id, body)
+      .then(data => res.send(data), err => res.send(err))
     })
   return router
 }
