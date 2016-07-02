@@ -31,7 +31,9 @@ function routing(schema) {
       res.send(req.params)
     })
     .patch('/:name/:id', (req, res) => {
-      res.send(req.params)
+      const { body, db, params } = req
+      db.update(params.name, params.id, body)
+      .then(data => res.send(data), err => res.send(err))
     })
   return router
 }

@@ -13,7 +13,6 @@ function createConnection(req, res, next) {
     req.connection = connection
     req.db = {
       find(tableName, id) {
-        console.log(tableName, id)
         if (id) {
           return r.table(tableName).filter({ id: parseInt(id) }).run(connection)
           .then(result => result.toArray())
@@ -23,6 +22,10 @@ function createConnection(req, res, next) {
       },
       insert(tableName, data) {
         return r.table(tableName).insert(data).run(connection)
+      },
+      update(tableName, id, data) {
+        return r.table(tableName).get(parseInt(id)).update(data)
+        .run(connection)
       },
     }
     next()
