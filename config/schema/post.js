@@ -1,7 +1,7 @@
 
 module.exports = {
   type: 'object',
-  indicies: ['date'],
+  indicies: ['_created'],
   properties: {
     title: {
       type: 'string',
