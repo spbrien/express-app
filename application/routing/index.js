@@ -37,6 +37,11 @@ function routing(schema) {
       db.update(params.name, params.id, body)
       .then(data => res.send(data), err => res.send(err))
     })
+    .delete('/:name/:id', (req, res) => {
+      const { name, id } = req.params
+      req.db.delete(name, id)
+      .then(data => res.send(data), err => res.send(err))
+    })
   return router
 }
 

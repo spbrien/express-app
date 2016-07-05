@@ -9,7 +9,7 @@ const dbConfig = {
 
 function validate(schema) {
   return (req, res, next) => {
-    if (req.method !== 'GET') {
+    if (req.method !== 'GET' && req.method !== 'DELETE') {
       // Hack to get the resource name because for some reason req.params is undefined here
       const param = req.originalUrl.replace('/api/v1/', '').split('/')[0]
       const validation = inspector.validate(schema[param], req.body)
@@ -44,6 +44,10 @@ function createConnection(req, res, next) {
       },
       replace(tableName, id, data) {
         return r.table(tableName).get(id).replace(data)
+        .run(connection)
+      },
+      delete(tableName, id) {
+        return r.table(tableName).get(id).delete()
         .run(connection)
       },
     }
