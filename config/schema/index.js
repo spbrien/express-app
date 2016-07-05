@@ -17,9 +17,8 @@ module.exports = fs
     const ext = path.extname(file)
     const fileWithoutExt = file.slice(0, -ext.length)
     const resourceName = inflection.transform(fileWithoutExt, ['pluralize', 'camelize', 'lowerize'])
-    // create table for model
-    utils.createTable(config, resourceName)
-  /*  */
     models[resourceName] = require(path.join(__dirname, fileWithoutExt))
+    // create table for model
+    utils.createTable(config, resourceName, models[resourceName])
     return models
   }, {})

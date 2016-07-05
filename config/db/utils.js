@@ -26,7 +26,7 @@ function checkTables(name, cb) {
 }
 
 
-function createTable(config, name) {
+function createTable(config, name, schema) {
   checkTables(name, (exists, connection) => {
     if (exists) {
       return false
@@ -35,6 +35,14 @@ function createTable(config, name) {
     .then((err, result) => {
       if (err) console.dir(err)
       return result
+    })
+    .then(() => {
+      if (schema.hasOwnProperty('indicies')) {
+        schema.indicies.forEach(idx => {
+          r.table(name).indexCreate(idx)
+          .run(connection)
+        })
+      }
     })
     return true
   })
