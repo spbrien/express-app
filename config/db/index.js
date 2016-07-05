@@ -36,13 +36,17 @@ function createConnection(req, res, next) {
         .then(result => result.toArray())
       },
       insert(tableName, data) {
+        data._created = r.now()
+        console.log(data)
         return r.table(tableName).insert(data).run(connection)
       },
       update(tableName, id, data) {
+        data._updated = r.now()
         return r.table(tableName).get(id).update(data)
         .run(connection)
       },
       replace(tableName, id, data) {
+        data._updated = r.now()
         return r.table(tableName).get(id).replace(data)
         .run(connection)
       },

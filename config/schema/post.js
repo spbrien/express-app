@@ -1,6 +1,7 @@
 
 module.exports = {
   type: 'object',
+  indicies: ['date'],
   properties: {
     title: {
       type: 'string',
