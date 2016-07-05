@@ -37,7 +37,6 @@ function createConnection(req, res, next) {
       },
       insert(tableName, data) {
         data._created = r.now()
-        console.log(data)
         return r.table(tableName).insert(data).run(connection)
       },
       update(tableName, id, data) {
