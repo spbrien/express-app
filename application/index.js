@@ -2,6 +2,9 @@ const routing = require('./routing')
 
 function factory(app, port) {
   return (config) => {
+    // Schema validation
+    app.use(config.db.validate(config.schema))
+
     // Set up connection to rethinkdb
     app.use(config.db.createConnection)
 

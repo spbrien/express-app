@@ -1,16 +1,20 @@
 
-const _schema = {
-  title: {
-    type: 'string',
-    validation: {
-      minlength: 0,
+module.exports = {
+  type: 'object',
+  properties: {
+    title: {
+      type: 'string',
+      minlength: 1,
       maxlength: 100,
-      required: false,
-      choices: ['Post Title', 'Post Title Two'],
+    },
+    author: {
+      type: 'string',
+      minlength: 1,
+      maxlength: 100,
+    },
+    featured: {
+      type: 'boolean',
+      def: false,
     },
   },
-}
-
-module.exports = {
-  _schema,
 }

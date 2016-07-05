@@ -1,4 +1,5 @@
 const r = require('rethinkdb')
+const inspector = require('schema-inspector')
 
 const dbConfig = {
   host: process.env.DB_HOST,
@@ -6,6 +7,20 @@ const dbConfig = {
   db: process.env.DB_NAME,
 }
 
+function validate(schema) {
+  return (req, res, next) => {
+    if (req.method !== 'GET') {
+      // Hack to get the resource name because for some reason req.params is undefined here
+      const param = req.originalUrl.replace('/api/v1/', '').split('/')[0]
+      const validation = inspector.validate(schema[param], req.body)
+      if (validation.valid) {
+        return next()
+      }
+      return res.status(400).send(validation.format())
+    }
+    return next()
+  }
+}
 
 function createConnection(req, res, next) {
   r.connect(dbConfig)
@@ -14,7 +29,7 @@ function createConnection(req, res, next) {
     req.db = {
       find(tableName, id) {
         if (id) {
-          return r.table(tableName).filter({ id: parseInt(id) }).run(connection)
+          return r.table(tableName).filter({ id }).run(connection)
           .then(result => result.toArray())
         }
         return r.table(tableName).run(connection)
@@ -24,11 +39,11 @@ function createConnection(req, res, next) {
         return r.table(tableName).insert(data).run(connection)
       },
       update(tableName, id, data) {
-        return r.table(tableName).get(parseInt(id)).update(data)
+        return r.table(tableName).get(id).update(data)
         .run(connection)
       },
       replace(tableName, id, data) {
-        return r.table(tableName).get(parseInt(id)).replace(data)
+        return r.table(tableName).get(id).replace(data)
         .run(connection)
       },
     }
@@ -46,5 +61,6 @@ module.exports = {
   createConnection,
   closeConnection,
   dbConfig,
+  validate,
 
 }
