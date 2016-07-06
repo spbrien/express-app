@@ -1,6 +1,6 @@
 const r = require('rethinkdb')
 const inspector = require('schema-inspector')
-
+const md5 = require('md5')
 const dbConfig = {
   host: process.env.DB_HOST,
   port: process.env.DB_PORT,
@@ -37,15 +37,18 @@ function createConnection(req, res, next) {
       },
       insert(tableName, data) {
         data._created = r.now()
+        data._etag = md5(JSON.stringify(data))
         return r.table(tableName).insert(data).run(connection)
       },
       update(tableName, id, data) {
         data._updated = r.now()
+        data._etag = md5(JSON.stringify(data))
         return r.table(tableName).get(id).update(data)
         .run(connection)
       },
       replace(tableName, id, data) {
         data._updated = r.now()
+        data._etag = md5(JSON.stringify(data))
         return r.table(tableName).get(id).replace(data)
         .run(connection)
       },
