@@ -37,6 +37,7 @@ function createTable(config, name, schema) {
       return result
     })
     .then(() => {
+      // Create secondary indicies for orderBy, filtering etc.
       if (schema.hasOwnProperty('indicies')) {
         schema.indicies.forEach(idx => {
           r.table(name).indexCreate(idx)

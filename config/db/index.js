@@ -1,11 +1,13 @@
 const r = require('rethinkdb')
 const inspector = require('schema-inspector')
-
+const md5 = require('md5')
 const dbConfig = {
   host: process.env.DB_HOST,
   port: process.env.DB_PORT,
   db: process.env.DB_NAME,
 }
+// const utils = require('./utils.js')
+
 
 function validate(schema) {
   return (req, res, next) => {
@@ -20,6 +22,25 @@ function validate(schema) {
     }
     return next()
   }
+}
+
+/**
+ * Determines if the Etag in the request matches the Etag in the database.
+ *
+ * @param {String} tableName
+ * @param {String} id
+ * @param {String} etag
+ * @param {Object} connection - the active connection to the database
+ * @returns {Promise|Boolean}
+ */
+function checkEtag(tableName, id, etag, connection) {
+  console.log(typeof connection)
+  return r.table(tableName).filter({ id }).run(connection)
+  .then(cursor => cursor.next())
+  .then(data => {
+    if (data._etag === etag) return true
+    return false
+  })
 }
 
 function createConnection(req, res, next) {
@@ -37,17 +58,32 @@ function createConnection(req, res, next) {
       },
       insert(tableName, data) {
         data._created = r.now()
+        data._etag = md5(JSON.stringify(data))
         return r.table(tableName).insert(data).run(connection)
       },
       update(tableName, id, data) {
-        data._updated = r.now()
-        return r.table(tableName).get(id).update(data)
-        .run(connection)
+        return checkEtag(tableName, id, req.headers['if-match'], connection)
+        .then(match => {
+          if (match) {
+            data._updated = r.now()
+            data._etag = md5(JSON.stringify(data))
+            return r.table(tableName).get(id).update(data)
+            .run(connection)
+          }
+          return new Promise((resolve, reject) => reject('Etag mismatch'))
+        })
       },
       replace(tableName, id, data) {
-        data._updated = r.now()
-        return r.table(tableName).get(id).replace(data)
-        .run(connection)
+        return checkEtag(tableName, id, req.headers['if-match'], connection)
+        .then(match => {
+          if (match) {
+            data._updated = r.now()
+            data._etag = md5(JSON.stringify(data))
+            return r.table(tableName).get(id).replace(data)
+            .run(connection)
+          }
+          return new Promise((resolve, reject) => reject('Etag mismatch'))
+        })
       },
       delete(tableName, id) {
         return r.table(tableName).get(id).delete()
