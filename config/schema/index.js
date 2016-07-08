@@ -1,9 +1,9 @@
-/* eslint-disable global-require, no-shadow */
+/* eslint-disable global-require, no-shadow import/no-unresolved */
 const fs = require('fs')
 const path = require('path')
 const inflection = require('inflection')
-const config = require('../db/').dbConfig
-const utils = require('../db/utils')
+const config = require('config/db').dbConfig
+const utils = require('config/db/utils')
 
 inflection.lowerize = function (str) {
   return str.substring(0, 1).toLowerCase() + str.substring(1)

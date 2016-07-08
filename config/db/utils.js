@@ -52,4 +52,5 @@ function createTable(config, name, schema) {
 
 module.exports = {
   createTable,
+
 }

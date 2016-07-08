@@ -6,8 +6,8 @@ const dbConfig = {
   port: process.env.DB_PORT,
   db: process.env.DB_NAME,
 }
-// const utils = require('./utils.js')
-
+const settings = require('config/default_settings')
+const _find = require('config/db/methods/find')
 
 function validate(schema) {
   return (req, res, next) => {
@@ -43,18 +43,15 @@ function checkEtag(tableName, id, etag, connection) {
   })
 }
 
+// TODO: create a separate file for each of these db methods, they are going to end up needing much more logic
+
 function createConnection(req, res, next) {
   r.connect(dbConfig)
   .then((connection) => {
     req.connection = connection
     req.db = {
       find(tableName, id) {
-        if (id) {
-          return r.table(tableName).filter({ id }).run(connection)
-          .then(result => result.toArray())
-        }
-        return r.table(tableName).run(connection)
-        .then(result => result.toArray())
+        return _find(tableName, id, req, connection)
       },
       insert(tableName, data) {
         data._created = r.now()
