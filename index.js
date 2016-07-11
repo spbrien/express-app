@@ -1,6 +1,6 @@
 
 require('dotenv').load()
-
+require('app-module-path').addPath(__dirname)
 // Modules
 const app = require('express')()
 const morgan = require('morgan')

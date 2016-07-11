@@ -12,7 +12,15 @@ function routing(schema) {
   .get('/:name', (req, res) => {
     req.db.find(req.params.name)
     .then((results) => {
-      res.send(results)
+      // _meta and result are both promises so we need to resolve them individually before sending response
+      Promise.resolve(results.result)
+      .then(data => {
+        Promise.resolve(results._meta)
+        .then(meta => {
+          const response = { _items: data, _meta: meta }
+          res.send(response)
+        })
+      })
     })
   })
   .get('/:name/:id', (req, res) => {
