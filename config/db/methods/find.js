@@ -43,7 +43,6 @@ function constructMeta(tableName, max_results, connection, page = 1) {
   })
 }
 
-
 /**
 * Find specified resource/resources in the database
 *
@@ -54,6 +53,11 @@ function constructMeta(tableName, max_results, connection, page = 1) {
 * @returns {Object} - result of composeResponse
 */
 function _find(tableName, id, req, connection) {
+  // format 'where' query string into json
+  let where = null
+  if (req.query.where) {
+    where = JSON.parse(req.query.where)
+  }
   if (id) {
     return r.table(tableName).filter({ id }).run(connection)
     .then(result => result.toArray())
@@ -62,14 +66,17 @@ function _find(tableName, id, req, connection) {
   if (settings.PAGINATION && settings.PAGINATION_DEFAULT) {
     // if 'page' query string is passed
     if (req.query.page) {
-      return r.table(tableName).orderBy({ index: r.desc('_created') }).skip((req.query.page - 1) * settings.PAGINATION_DEFAULT)
+      /* eslint-disable no-unneeded-ternary */                        // filter by query string or return all
+      return r.table(tableName).orderBy({ index: r.desc('_created') }).filter(where ? where : row => row.id !== null)
+      .skip((req.query.page - 1) * settings.PAGINATION_DEFAULT)
       .limit(settings.PAGINATION_DEFAULT).run(connection)
       .then(result => {
         return composeResponse(result, constructMeta(tableName, settings.PAGINATION_DEFAULT, connection, req.query.page))
       })
     }
     // default first page
-    return r.table(tableName).orderBy({ index: r.desc('_created') }).limit(settings.PAGINATION_DEFAULT).run(connection)
+    return r.table(tableName).orderBy({ index: r.desc('_created') }).filter(where ? where : row => row.id !== null)
+    .limit(settings.PAGINATION_DEFAULT).run(connection)
     .then(result => {
       return composeResponse(result, constructMeta(tableName, settings.PAGINATION_DEFAULT, connection))
     })

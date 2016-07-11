@@ -6,7 +6,7 @@ const dbConfig = {
   port: process.env.DB_PORT,
   db: process.env.DB_NAME,
 }
-const settings = require('config/default_settings')
+
 const _find = require('config/db/methods/find')
 
 function validate(schema) {
@@ -34,7 +34,6 @@ function validate(schema) {
  * @returns {Promise|Boolean}
  */
 function checkEtag(tableName, id, etag, connection) {
-  console.log(typeof connection)
   return r.table(tableName).filter({ id }).run(connection)
   .then(cursor => cursor.next())
   .then(data => {
