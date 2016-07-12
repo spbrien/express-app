@@ -52,7 +52,7 @@ function constructMeta(tableName, max_results, connection, page = 1) {
 * @param {Object} connection - active database connection (passed in from middleware)
 * @returns {Object} - result of composeResponse
 */
-function _find(tableName, id, req, connection) {
+function find(tableName, id, req, connection) {
   // format 'where' query string into json
   let where = null
   if (req.query.where) {
@@ -88,4 +88,4 @@ function _find(tableName, id, req, connection) {
   })
 }
 
-module.exports = _find
+module.exports = find

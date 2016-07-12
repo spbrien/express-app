@@ -7,7 +7,7 @@ const dbConfig = {
   db: process.env.DB_NAME,
 }
 
-const _find = require('config/db/methods/find')
+const methods = require('config/db/methods')
 
 function validate(schema) {
   return (req, res, next) => {
@@ -37,6 +37,7 @@ function checkEtag(tableName, id, etag, connection) {
   return r.table(tableName).filter({ id }).run(connection)
   .then(cursor => cursor.next())
   .then(data => {
+    console.log(data._etag, etag)
     if (data._etag === etag) return true
     return false
   })
@@ -50,21 +51,16 @@ function createConnection(req, res, next) {
     req.connection = connection
     req.db = {
       find(tableName, id) {
-        return _find(tableName, id, req, connection)
+        return methods.find(tableName, id, req, connection)
       },
       insert(tableName, data) {
-        data._created = r.now()
-        data._etag = md5(JSON.stringify(data))
-        return r.table(tableName).insert(data).run(connection)
+        return methods.insert(tableName, data, connection)
       },
       update(tableName, id, data) {
         return checkEtag(tableName, id, req.headers['if-match'], connection)
         .then(match => {
           if (match) {
-            data._updated = r.now()
-            data._etag = md5(JSON.stringify(data))
-            return r.table(tableName).get(id).update(data)
-            .run(connection)
+            return methods.update(tableName, id, data, connection)
           }
           return new Promise((resolve, reject) => reject('Etag mismatch'))
         })
@@ -73,10 +69,7 @@ function createConnection(req, res, next) {
         return checkEtag(tableName, id, req.headers['if-match'], connection)
         .then(match => {
           if (match) {
-            data._updated = r.now()
-            data._etag = md5(JSON.stringify(data))
-            return r.table(tableName).get(id).replace(data)
-            .run(connection)
+            return methods.replace(tableName, id, data, connection)
           }
           return new Promise((resolve, reject) => reject('Etag mismatch'))
         })
