@@ -1,6 +1,5 @@
 const r = require('rethinkdb')
 const inspector = require('schema-inspector')
-const md5 = require('md5')
 const dbConfig = {
   host: process.env.DB_HOST,
   port: process.env.DB_PORT,

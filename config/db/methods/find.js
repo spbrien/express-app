@@ -1,5 +1,5 @@
 const r = require('rethinkdb')
-const settings = require('config/default_settings')
+const settings = require('../../../config/default_settings')
 
 
 function composeResponse(result, _meta) {
@@ -55,7 +55,7 @@ function constructMeta(tableName, max_results, connection, page = 1) {
 function find(tableName, id, req, connection) {
   // format 'where' query string into json
   let where = null
-  if (req.query.where) {
+  if (req.query && req.query.where) {
     where = JSON.parse(req.query.where)
   }
   if (id) {
@@ -65,7 +65,7 @@ function find(tableName, id, req, connection) {
   // handles pagination if enabled in settings
   if (settings.PAGINATION && settings.PAGINATION_DEFAULT) {
     // if 'page' query string is passed
-    if (req.query.page) {
+    if (req.query && req.query.page) {
       /* eslint-disable no-unneeded-ternary */                        // filter by query string or return all
       return r.table(tableName).orderBy({ index: r.desc('_created') }).filter(where ? where : row => row.id !== null)
       .skip((req.query.page - 1) * settings.PAGINATION_DEFAULT)
