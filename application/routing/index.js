@@ -3,6 +3,9 @@ const router = new express.Router()
 
 function routing(schema) {
   router
+  .get('/', (req, res) => {
+    res.send('hello')
+  })
   .get('/info', (req, res) => {
     res.send(schema)
   })
