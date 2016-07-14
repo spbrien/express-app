@@ -67,7 +67,8 @@ function find(tableName, id, req, connection, settings = _settings) {
     // if 'page' query string is passed
     if (req.query && req.query.page) {
       /* eslint-disable no-unneeded-ternary */                        // filter by query string or return all
-      return r.table(tableName).orderBy(settings._CREATED_INDEX ? { index: r.desc('_created') } : r.desc('_created')).filter(where ? where : row => row.id !== null)
+      return r.table(tableName).orderBy(settings._CREATED_INDEX ?
+       { index: r.desc('_created') } : r.desc('_created')).filter(where ? where : row => row.id !== null)
       .skip((req.query.page - 1) * settings.PAGINATION_DEFAULT)
       .limit(settings.PAGINATION_DEFAULT).run(connection)
       .then(result => {
@@ -75,7 +76,8 @@ function find(tableName, id, req, connection, settings = _settings) {
       })
     }
     // default first page
-    return r.table(tableName).orderBy(settings._CREATED_INDEX ? { index: r.desc('_created') } : r.desc('_created')).filter(where ? where : row => row.id !== null)
+    return r.table(tableName).orderBy(settings._CREATED_INDEX ?
+    { index: r.desc('_created') } : r.desc('_created')).filter(where ? where : row => row.id !== null)
     .limit(settings.PAGINATION_DEFAULT).run(connection)
     .then(result => {
       return composeResponse(result, constructMeta(tableName, settings.PAGINATION_DEFAULT, connection))
