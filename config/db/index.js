@@ -6,7 +6,7 @@ const dbConfig = {
   db: process.env.DB_NAME,
 }
 
-const methods = require('config/db/methods')
+const methods = require('./methods')
 
 function validate(schema) {
   return (req, res, next) => {
@@ -36,7 +36,6 @@ function checkEtag(tableName, id, etag, connection) {
   return r.table(tableName).filter({ id }).run(connection)
   .then(cursor => cursor.next())
   .then(data => {
-    console.log(data._etag, etag)
     if (data._etag === etag) return true
     return false
   })
@@ -93,5 +92,6 @@ module.exports = {
   closeConnection,
   dbConfig,
   validate,
+  checkEtag,
 
 }
