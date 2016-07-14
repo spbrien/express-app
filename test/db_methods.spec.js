@@ -4,6 +4,7 @@ const mockDb = require('./db_mock.spec.js')
 const find = require('../config/db/methods/find')
 const insert = require('../config/db/methods/insert')
 const update = require('../config/db/methods/update')
+const replace = require('../config/db/methods/replace')
 const r = require('rethinkdb')
 const Chance = require('chance')
 const chance = new Chance()
@@ -110,6 +111,24 @@ describe('db methods', () => {
             done()
           })
         })
+    })
+  })
+  describe('replace', () => {
+    it('should replace a record', done => {
+      insert(info.table_name, { foo: 'bar' }, info.rdb_conn)
+      .then(data => {
+        const id = data.changes[0].new_val.id
+        replace(info.table_name, id, { id, poke: 'mon' }, info.rdb_conn)
+        .then(data => {
+          const changes = data.changes[0].new_val
+          expect(changes.foo).toBeFalsy()
+          expect(changes.poke).toBeTruthy()
+          expect(changes.poke).toBe('mon')
+          expect(changes.id).toBe(id)
+          info.done()
+          done()
+        })
+      })
     })
   })
 })
