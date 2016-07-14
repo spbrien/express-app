@@ -55,9 +55,17 @@ function constructMeta(tableName, max_results, connection, page = 1) {
 function find(tableName, id, req, connection, settings = _settings) {
   // format 'where' query string into json
   let where = null
+  // default db query - ordered by created time
+  let query = r.table(tableName).orderBy(settings._CREATED_INDEX ? { index: r.desc('_created') } : r.desc('_created'))
+  // parse query string into JSON
   if (req.query && req.query.where) {
     where = JSON.parse(req.query.where)
   }
+  // filter if 'where' query is provided
+  if (where) {
+    query = query.filter(where)
+  }
+
   if (id) {
     return r.table(tableName).filter({ id }).run(connection)
     .then(result => result.toArray())
@@ -66,25 +74,23 @@ function find(tableName, id, req, connection, settings = _settings) {
   if (settings.PAGINATION && settings.PAGINATION_DEFAULT) {
     // if 'page' query string is passed
     if (req.query && req.query.page) {
-      /* eslint-disable no-unneeded-ternary */                        // filter by query string or return all
-      return r.table(tableName).orderBy(settings._CREATED_INDEX ?
-       { index: r.desc('_created') } : r.desc('_created')).filter(where ? where : row => row.id !== null)
-      .skip((req.query.page - 1) * settings.PAGINATION_DEFAULT)
-      .limit(settings.PAGINATION_DEFAULT).run(connection)
+      query = query.skip((req.query.page - 1) * settings.PAGINATION_DEFAULT).limit(settings.PAGINATION_DEFAULT).run(connection)
+      return query
       .then(result => {
         return composeResponse(result, constructMeta(tableName, settings.PAGINATION_DEFAULT, connection, req.query.page))
       })
     }
+
     // default first page
-    return r.table(tableName).orderBy(settings._CREATED_INDEX ?
-    { index: r.desc('_created') } : r.desc('_created')).filter(where ? where : row => row.id !== null)
-    .limit(settings.PAGINATION_DEFAULT).run(connection)
+    /* eslint-disable no-unneeded-ternary */
+    query = query.limit(settings.PAGINATION_DEFAULT).run(connection)
+    return query
     .then(result => {
       return composeResponse(result, constructMeta(tableName, settings.PAGINATION_DEFAULT, connection))
     })
   }
   // return all items if pagination disabled
-  return r.table(tableName).filter(where ? where : row => row.id !== null).run(connection)
+  return r.table(tableName).run(connection)
   .then(result => {
     return composeResponse(result)
   })
