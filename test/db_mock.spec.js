@@ -44,9 +44,9 @@ function rethinkInstance(options, done, cb) {
           const rdb_process = cp.spawn('rethinkdb', rdb_options, { cwd: temp_dir })
 
 
-          //    process.on('exit', () => rdb_process.kill())
+          process.on('exit', () => rdb_process.kill())
 
-          //  process.on('uncaughtException', () => rdb_process.kill())
+          process.on('uncaughtException', () => rdb_process.kill())
 
           rdb_process.on('close', code => {
             console.warn(`Test RethinkDB child process exited with code ${code}`)
@@ -88,6 +88,7 @@ function createTestDB(rdb_info, options, done, cb) {
   }
 
   let test_db_name = ''
+  // set db name if passed in options, else auto generate the name
   if (!R.isNil(options) && R.has('db_name', options)) {
     test_db_name = options.db_name
   } else test_db_name = ['_test_db', process.env.user, process.pid, Date.now()].join('_')
@@ -111,6 +112,7 @@ function createTestDB(rdb_info, options, done, cb) {
           if (deleted && !err) {
             console.log(`Successfully dropped test db [${test_db_name}]`)
           }
+          rdb_info.rdb_conn.close()
           done()
         })
       }
@@ -125,7 +127,7 @@ function createTestTable(rdb_info, options, done, cb) {
     throw Error('rdb_info is expected to contain a valid connection')
   }
   let test_table_name = ''
-
+    // set table name if passed in options, else auto generate the name
   if (!R.isNil(options) && R.has('table_name', options)) {
     test_table_name = options.table_name
   } else test_table_name = ['_test_table_', process.env.USER, process.pid, Date.now()].join('_')
@@ -143,10 +145,8 @@ function createTestTable(rdb_info, options, done, cb) {
       rdb_info.done = done
     } else {
       rdb_info.done = function () {
-        console.log('called')
         return r.db(rdb_info.db_name).tableDrop(test_table_name).run(rdb_info.rdb_conn, (err, dropped) => {
           if (err) console.log(err)
-          console.log(dropped)
           if (dropped) console.log(`Successfuly dropped table [${test_table_name}]`)
           done()
         })
@@ -155,32 +155,6 @@ function createTestTable(rdb_info, options, done, cb) {
     cb(rdb_info)
   })
 }
-
-
-/* describe('withTestTableCreated', () => {
-it('should create a named test table in a tempDB and insert data', done => {
-rethinkInstance({}, done, rdb_info => {
-createTestDB(rdb_info, {}, rdb_info.done, rdb_info => {
-createTestTable(rdb_info, {}, rdb_info.done, rdb_info => {
-// test if table was created
-r.db(rdb_info.db_name).tableList().run(rdb_info.rdb_conn, (err, tables) => {
-if (err) throw err
-expect(tables).toContain(rdb_info.table_name)
-})
-// test that data can be inserted
-r.db(rdb_info.db_name).table(rdb_info.table_name).insert({ foo: 'bar' }, { returnChanges: true }).run(rdb_info.rdb_conn, (err, data) => {
-if (err) throw err
-expect(data.changes[0].new_val.foo).toBeTruthy()
-if (data.changes[0].new_val.foo) {
-expect(data.changes[0].new_val.foo).toContain('bar')
-}
-rdb_info.done()
-})
-})
-})
-})
-}, 7000)
-}) */
 
 
 module.exports = {

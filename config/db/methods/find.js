@@ -1,5 +1,5 @@
 const r = require('rethinkdb')
-const settings = require('../../../config/default_settings')
+const _settings = require('../../../config/default_settings')
 
 
 function composeResponse(result, _meta) {
@@ -52,7 +52,7 @@ function constructMeta(tableName, max_results, connection, page = 1) {
 * @param {Object} connection - active database connection (passed in from middleware)
 * @returns {Object} - result of composeResponse
 */
-function find(tableName, id, req, connection) {
+function find(tableName, id, req, connection, settings = _settings) {
   // format 'where' query string into json
   let where = null
   if (req.query && req.query.where) {
@@ -67,7 +67,7 @@ function find(tableName, id, req, connection) {
     // if 'page' query string is passed
     if (req.query && req.query.page) {
       /* eslint-disable no-unneeded-ternary */                        // filter by query string or return all
-      return r.table(tableName).orderBy({ index: r.desc('_created') }).filter(where ? where : row => row.id !== null)
+      return r.table(tableName).orderBy(settings._CREATED_INDEX ? { index: r.desc('_created') } : r.desc('_created')).filter(where ? where : row => row.id !== null)
       .skip((req.query.page - 1) * settings.PAGINATION_DEFAULT)
       .limit(settings.PAGINATION_DEFAULT).run(connection)
       .then(result => {
@@ -75,14 +75,14 @@ function find(tableName, id, req, connection) {
       })
     }
     // default first page
-    return r.table(tableName).orderBy({ index: r.desc('_created') }).filter(where ? where : row => row.id !== null)
+    return r.table(tableName).orderBy(settings._CREATED_INDEX ? { index: r.desc('_created') } : r.desc('_created')).filter(where ? where : row => row.id !== null)
     .limit(settings.PAGINATION_DEFAULT).run(connection)
     .then(result => {
       return composeResponse(result, constructMeta(tableName, settings.PAGINATION_DEFAULT, connection))
     })
   }
   // return all items if pagination disabled
-  return r.table(tableName).run(connection)
+  return r.table(tableName).filter(where ? where : row => row.id !== null).run(connection)
   .then(result => {
     return composeResponse(result)
   })
