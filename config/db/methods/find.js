@@ -74,8 +74,7 @@ function find(tableName, id, req, connection, settings = _settings) {
   if (settings.PAGINATION && settings.PAGINATION_DEFAULT) {
     // if 'page' query string is passed
     if (req.query && req.query.page) {
-      query = query.skip((req.query.page - 1) * settings.PAGINATION_DEFAULT).limit(settings.PAGINATION_DEFAULT).run(connection)
-      return query
+      return query.skip((req.query.page - 1) * settings.PAGINATION_DEFAULT).limit(settings.PAGINATION_DEFAULT).run(connection)
       .then(result => {
         return composeResponse(result, constructMeta(tableName, settings.PAGINATION_DEFAULT, connection, req.query.page))
       })
@@ -83,8 +82,8 @@ function find(tableName, id, req, connection, settings = _settings) {
 
     // default first page
     /* eslint-disable no-unneeded-ternary */
-    query = query.limit(settings.PAGINATION_DEFAULT).run(connection)
-    return query
+
+    return query.limit(settings.PAGINATION_DEFAULT).run(connection)
     .then(result => {
       return composeResponse(result, constructMeta(tableName, settings.PAGINATION_DEFAULT, connection))
     })
