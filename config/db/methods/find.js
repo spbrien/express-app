@@ -43,6 +43,7 @@ function constructMeta(tableName, max_results, connection, page = 1) {
   })
 }
 
+
 /**
 * Find specified resource/resources in the database
 *
@@ -53,15 +54,23 @@ function constructMeta(tableName, max_results, connection, page = 1) {
 * @returns {Object} - result of composeResponse
 */
 function find(tableName, id, req, connection, settings = _settings) {
-  // format 'where' query string into json
   let where = null
-  // default db query - ordered by created time
-  let query = r.table(tableName).orderBy(settings._CREATED_INDEX ? { index: r.desc('_created') } : r.desc('_created'))
+  let query = r.table(tableName)
   // parse query string into JSON
   if (req.query && req.query.where) {
     where = JSON.parse(req.query.where)
   }
-  // filter if 'where' query is provided
+  // handle sorting of results
+  if (req.query && req.query.sort) {
+    const q = req.query.sort
+    // e.g '?sort=-author' should sort descending, else ascending by default
+    query = (q.substring(0, 1) === '-') ? query.orderBy(r.desc(q.slice(1, q.length))) : query.orderBy(r.asc(q))
+  } else {
+    // sort by _created in descending order by default
+    query = query.orderBy(settings._CREATED_INDEX ? { index: r.desc('_created') } : r.desc('_created'))
+  }
+
+  // filter if necessary
   if (where) {
     query = query.filter(where)
   }

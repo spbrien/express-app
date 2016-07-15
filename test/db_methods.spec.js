@@ -17,6 +17,7 @@ function fakerFactory(length) {
       name: chance.string(),
       _created: r.now(),
       featured: chance.bool({ likelihood: 90 }),
+      number: i + 1,
     })
   }
   return result
@@ -34,24 +35,23 @@ function fakerFactory(length) {
 * @returns {Void} - test result
 */
 function findHelper(info, data, settings, expect_length, done, req = {}, id = null) {
-  //  r.table(info.table_name).indexCreate('_created').run(info.rdb_conn)
-  //  .then(() => {
-  //  r.table(info.table_name).indexWait('_created').run(info.rdb_conn)
-  //  .then(() => {
   insert(info.table_name, data, info.rdb_conn)
   .then(() => {
     find(info.table_name, id, req, info.rdb_conn, settings)
     .then(data => {
       Promise.resolve(data.result)
       .then(data => {
+        if (req.query.sort === 'number') {
+          // numbers should be in proper order
+          const numbers = data.map(n => n.number)
+          expect(numbers).toEqual(numbers.sort())
+        }
         expect(data.length).toBe(expect_length)
         info.done()
         done()
       })
     })
   })
-  //  })
-  //  })
 }
 
 describe('db methods', () => {
@@ -83,11 +83,11 @@ describe('db methods', () => {
     it('should fetch all records if no pagination settings', done => {
       const data = fakerFactory(30)
       findHelper(info, data, { PAGINATION: false }, 30, done)
-    })
+    }, 20000)
     it('should fetch only pagination limit if set', done => {
       const data = fakerFactory(30)
       findHelper(info, data, { PAGINATION: true, PAGINATION_DEFAULT: 25 }, 25, done)
-    })
+    }, 20000)
     it('should paginate', done => {
       const data = fakerFactory(30)
       findHelper(info, data, { PAGINATION: true, PAGINATION_DEFAULT: 25 }, 5, done, { query: { page: 2 } })
@@ -96,7 +96,7 @@ describe('db methods', () => {
       const data = fakerFactory(50)
       const featured = data.filter(n => n.featured)
       findHelper(info, data, { PAGINATION: true, PAGINATION_DEFAULT: 25 },
-        featured.length - 25, done, { query: { where: JSON.stringify({ featured: true }), page: 2 } })
+        featured.length - 25, done, { query: { where: JSON.stringify({ featured: true }), sort: 'number', page: 2 } })
     })
   })
   describe('update', () => {
