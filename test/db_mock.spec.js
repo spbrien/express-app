@@ -44,12 +44,12 @@ function rethinkInstance(options, done, cb) {
           const rdb_process = cp.spawn('rethinkdb', rdb_options, { cwd: temp_dir })
 
 
-          process.on('eit', () => rdb_process.kill())
+          process.on('exit', () => rdb_process.kill())
 
           process.on('uncaughtException', () => rdb_process.kill())
 
           rdb_process.on('close', code => {
-            console.warn(`Test RethinkDB child process eited with code ${code}`)
+            console.warn(`Test RethinkDB child process exited with code ${code}`)
           })
 
           rdb_process.stdout.on('data', data => {
