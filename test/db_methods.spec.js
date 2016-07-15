@@ -35,14 +35,15 @@ function fakerFactory(length) {
 * @returns {Void} - test result
 */
 function findHelper(info, data, settings, expect_length, done, req = {}, id = null) {
+  let sort = false
+  if (req.query && req.query.sort === 'number') sort = true
   insert(info.table_name, data, info.rdb_conn)
   .then(() => {
     find(info.table_name, id, req, info.rdb_conn, settings)
     .then(data => {
       Promise.resolve(data.result)
       .then(data => {
-        if (req.query.sort === 'number') {
-          // numbers should be in proper order
+        if (sort) {
           const numbers = data.map(n => n.number)
           expect(numbers).toEqual(numbers.sort())
         }
