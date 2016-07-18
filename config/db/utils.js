@@ -26,7 +26,7 @@ function checkTables(name, cb) {
 }
 
 
-function createTable(config, name, schema) {
+function createTable(config, name, schema, cb) {
   checkTables(name, (exists, connection) => {
     if (exists) {
       return false
@@ -34,6 +34,7 @@ function createTable(config, name, schema) {
     r.db(config.db).tableCreate(name).run(connection)
     .then((err, result) => {
       if (err) console.dir(err)
+      cb(connection)
       return result
     })
     .then(() => {

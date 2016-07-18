@@ -1,6 +1,6 @@
 const express = require('express')
 const router = new express.Router()
-
+const auth = require('config/auth')
 function routing(schema) {
   router
   .get('/', (req, res) => {
@@ -12,7 +12,7 @@ function routing(schema) {
   .get('/info/:name', (req, res) => {
     res.send(schema[req.params.name])
   })
-  .get('/:name', (req, res) => {
+  .get('/:name', auth, (req, res) => {
     req.db.find(req.params.name)
     .then((results) => {
       // _meta and result are both promises so we need to resolve them individually before sending response
@@ -24,13 +24,13 @@ function routing(schema) {
           res.send(response)
         })
       })
-    })
+    }, err => res.status(404).send(err.msg))
   })
   .get('/:name/:id', (req, res) => {
     const { params, db } = req
     db.find(params.name, params.id).then(results => {
       res.send(results)
-    }, err => res.send(err))
+    }, err => res.status(404).send(err.msg))
   })
   .post('/:name', (req, res) => {
     const { body, db, params } = req

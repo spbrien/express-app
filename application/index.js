@@ -1,4 +1,5 @@
 const routing = require('./routing')
+const auth = require('config/auth')
 
 function factory(app, port) {
   return (config) => {
@@ -11,6 +12,7 @@ function factory(app, port) {
     // Set up Main Routing
     app.use('/api/v1', routing(config.schema))
 
+    app.use(auth)
     // close db connection
     app.use(config.db.closeConnection)
 
