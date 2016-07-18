@@ -43,6 +43,7 @@ function constructMeta(tableName, max_results, connection, page = 1) {
   })
 }
 
+
 /**
 * Find specified resource/resources in the database
 *
@@ -53,11 +54,27 @@ function constructMeta(tableName, max_results, connection, page = 1) {
 * @returns {Object} - result of composeResponse
 */
 function find(tableName, id, req, connection, settings = _settings) {
-  // format 'where' query string into json
   let where = null
+  let query = r.table(tableName)
+  // parse query string into JSON
   if (req.query && req.query.where) {
     where = JSON.parse(req.query.where)
   }
+  // handle sorting of results
+  if (req.query && req.query.sort) {
+    const q = req.query.sort
+    // e.g '?sort=-author' should sort descending, else ascending by default
+    query = (q.substring(0, 1) === '-') ? query.orderBy(r.desc(q.slice(1, q.length))) : query.orderBy(r.asc(q))
+  } else {
+    // sort by _created in descending order by default
+    query = query.orderBy(settings._CREATED_INDEX ? { index: r.desc('_created') } : r.desc('_created'))
+  }
+
+  // filter if necessary
+  if (where) {
+    query = query.filter(where)
+  }
+
   if (id) {
     return r.table(tableName).filter({ id }).run(connection)
     .then(result => result.toArray())
@@ -66,25 +83,20 @@ function find(tableName, id, req, connection, settings = _settings) {
   if (settings.PAGINATION && settings.PAGINATION_DEFAULT) {
     // if 'page' query string is passed
     if (req.query && req.query.page) {
-      /* eslint-disable no-unneeded-ternary */                        // filter by query string or return all
-      return r.table(tableName).orderBy(settings._CREATED_INDEX ?
-       { index: r.desc('_created') } : r.desc('_created')).filter(where ? where : row => row.id !== null)
-      .skip((req.query.page - 1) * settings.PAGINATION_DEFAULT)
-      .limit(settings.PAGINATION_DEFAULT).run(connection)
+      return query.skip((req.query.page - 1) * settings.PAGINATION_DEFAULT).limit(settings.PAGINATION_DEFAULT).run(connection)
       .then(result => {
         return composeResponse(result, constructMeta(tableName, settings.PAGINATION_DEFAULT, connection, req.query.page))
       })
     }
-    // default first page
-    return r.table(tableName).orderBy(settings._CREATED_INDEX ?
-    { index: r.desc('_created') } : r.desc('_created')).filter(where ? where : row => row.id !== null)
-    .limit(settings.PAGINATION_DEFAULT).run(connection)
+
+  // default first page
+    return query.limit(settings.PAGINATION_DEFAULT).run(connection)
     .then(result => {
       return composeResponse(result, constructMeta(tableName, settings.PAGINATION_DEFAULT, connection))
     })
   }
   // return all items if pagination disabled
-  return r.table(tableName).filter(where ? where : row => row.id !== null).run(connection)
+  return r.table(tableName).run(connection)
   .then(result => {
     return composeResponse(result)
   })
