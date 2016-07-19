@@ -51,6 +51,7 @@ function constructMeta(tableName, max_results, connection, page = 1) {
 * @param {String} id
 * @param {Object} req - request object (passed in from middleware)
 * @param {Object} connection - active database connection (passed in from middleware)
+* @param {Object} settings - overrides default_settings.js if passed in, else refers to default_settings
 * @returns {Object} - result of composeResponse
 */
 function find(tableName, id, req, connection, settings = _settings) {

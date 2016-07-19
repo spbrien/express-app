@@ -1,4 +1,6 @@
 const routing = require('./routing')
+const auth = require('config/auth').authenticate
+const jwt = require('jsonwebtoken')
 
 function factory(app, port) {
   return (config) => {
@@ -13,6 +15,15 @@ function factory(app, port) {
 
     // close db connection
     app.use(config.db.closeConnection)
+
+    app.get('/auth', config.db.createConnection, auth, (req, res) => {
+      const token = jwt.sign(req.user, app.get('secret'), { expiresIn: '2h' })
+      res.json({
+        success: true,
+        user: req.user.username,
+        token,
+      })
+    })
 
     // Listen
      /* eslint-disable no-console */

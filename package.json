@@ -1,6 +1,6 @@
 {
   "name": "my-express-app",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -11,14 +11,18 @@
   "license": "ISC",
   "dependencies": {
     "app-module-path": "^1.1.0",
+    "atob": "^2.0.3",
     "bcrypt": "^0.8.7",
     "bluebird": "^3.4.1",
     "body-parser": "^1.15.2",
     "cors": "^2.7.1",
     "dotenv": "^2.0.0",
     "express": "^4.14.0",
+    "express-authentication": "^0.3.2",
+    "express-authentication-basic": "^0.3.1",
     "helmet": "^2.1.1",
     "inflection": "^1.10.0",
+    "jsonwebtoken": "^7.1.6",
     "jwt-simple": "^0.5.0",
     "md5": "^2.1.0",
     "moment": "^2.13.0",
