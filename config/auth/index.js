@@ -33,6 +33,7 @@ function authenticate(req, res, next) {
 function checkToken(req, res, next) {
   const token = decodeToken(req.headers.authorization).password
   if (token) {
+    /* eslint-disable no-unused-vars */
     jwt.verify(token, req.app.get('secret'), (err, decoded) => {
       if (err) {
         res.json({
@@ -40,7 +41,6 @@ function checkToken(req, res, next) {
           message: 'Failed to authenticate token',
         })
       } else {
-        req.decoded = decoded
         next()
       }
     })
