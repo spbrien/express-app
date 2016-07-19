@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 module.exports = {
   PAGINATION: true,
   PAGINATION_LIMIT: 50,
@@ -5,4 +7,5 @@ module.exports = {
   _CREATED_INDEX: true,
   USERNAME: 'admin',
   PASSWORD: 'test',
+  SECRET_KEY: process.env.SECRET_KEY,
 }

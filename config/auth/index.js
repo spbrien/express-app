@@ -1,14 +1,13 @@
-const atob = require('atob')
 const bcrypt = require('bcrypt')
 const r = require('rethinkdb')
+const jwt = require('jsonwebtoken')
+const decodeToken = require('application/utils/helpers').decodeToken
 
-function auth(req, res, next) {
+function authenticate(req, res, next) {
   if (req.headers.authorization && req.headers.authorization.search('Basic ') === 0) {
     // Grab btoa string, decode, and separate username and password into variables
-    const authString = req.headers.authorization.replace(/Basic/g, '')
-    const decoded = atob(authString)
-    const username = decoded.slice(0, decoded.indexOf(':'))
-    const password = decoded.slice(decoded.indexOf(':') + 1)
+    const { username, password } = decodeToken(req.headers.authorization)
+
     // search for user in database
     r.table('accounts').filter({ username }).run(req.connection)
     .then(data => {
@@ -20,12 +19,35 @@ function auth(req, res, next) {
         bcrypt.compare(password, data[0].password, (err, resp) => {
           if (resp) {
             req.authenticated = true
+            req.user = data[0]
             next()
           } else res.status(401).send('Invalid credentials')
         })
       })
     })
+  } else {
+    res.status(401).send('authorization required')
   }
 }
 
-module.exports = auth
+function checkToken(req, res, next) {
+  const token = decodeToken(req.headers.authorization).password
+  if (token) {
+    jwt.verify(token, req.app.get('secret'), (err, decoded) => {
+      if (err) {
+        res.json({
+          success: false,
+          message: 'Failed to authenticate token',
+        })
+      } else {
+        req.decoded = decoded
+        next()
+      }
+    })
+  } else res.status(401).send('Invalid token')
+}
+
+module.exports = {
+  authenticate,
+  checkToken,
+}
