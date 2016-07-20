@@ -21,7 +21,6 @@
     "helmet": "^2.1.1",
     "inflection": "^1.10.0",
     "jsonwebtoken": "^7.1.6",
-    "jwt-simple": "^0.5.0",
     "md5": "^2.1.0",
     "moment": "^2.13.0",
     "morgan": "^1.7.0",
@@ -32,6 +31,7 @@
     "schema-inspector": "^1.6.4"
   },
   "devDependencies": {
+    "btoa": "^1.1.2",
     "chance": "^1.0.3",
     "portfinder": "^1.0.3",
     "pre-commit": "^1.1.3",
