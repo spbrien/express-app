@@ -7,28 +7,27 @@ const dbConfig = {
 }
 
 const methods = require('./methods')
-// TODO: allow for validation of multiple objects
+
 function validate(schema) {
   return (req, res, next) => {
     if (req.method !== 'GET' && req.method !== 'DELETE') {
       // Hack to get the resource name because for some reason req.params is undefined here
       const param = req.originalUrl.replace('/api/v1/', '').split('/')[0]
+      // if single item passed in, wrap it in an array in order to run through loop
+      if (!Array.isArray(req.body)) {
+        req.body = [req.body]
+      }
       let iterations = 0
       for (const item of req.body) {
         iterations++
         const validation = inspector.validate(schema[param], item)
-        console.log(validation)
+        // if one of the items fails validation, break loop and respond with error
         if (!validation.valid) {
           return res.status(400).send(validation.format())
         }
+        // if loop runs to completion without validation errors, call next
         if (iterations === req.body.length) return next()
       }
-      /*  const validation = inspector.validate(schema[param], req.body)
-      console.log(validation)
-      if (validation.valid) {
-      return next()
-    }
-    return res.status(400).send(validation.format()) */
     }
     return next()
   }
