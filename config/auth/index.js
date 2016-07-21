@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt')
 const r = require('rethinkdb')
 const jwt = require('jsonwebtoken')
-const decodeToken = require('application/utils/helpers').decodeToken
+const decodeToken = require('../../application/utils/helpers').decodeToken
 
 function authenticate(req, res, next) {
   if (req.headers.authorization && req.headers.authorization.search('Basic ') === 0) {
@@ -33,6 +33,7 @@ function authenticate(req, res, next) {
 function checkToken(req, res, next) {
   const token = decodeToken(req.headers.authorization).password
   if (token) {
+    /* eslint-disable no-unused-vars */
     jwt.verify(token, req.app.get('secret'), (err, decoded) => {
       if (err) {
         res.json({
@@ -40,7 +41,7 @@ function checkToken(req, res, next) {
           message: 'Failed to authenticate token',
         })
       } else {
-        req.decoded = decoded
+        req.verified = true
         next()
       }
     })

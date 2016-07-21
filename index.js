@@ -19,3 +19,10 @@ app.use(bodyParser.json())
 app.set('secret', md5(settings.SECRET_KEY))
 // Init Application
 factory(app, port)(config)
+
+module.exports = {
+  factory,
+  app,
+  port,
+  config,
+}

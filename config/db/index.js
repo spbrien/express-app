@@ -13,25 +13,35 @@ function validate(schema) {
     if (req.method !== 'GET' && req.method !== 'DELETE') {
       // Hack to get the resource name because for some reason req.params is undefined here
       const param = req.originalUrl.replace('/api/v1/', '').split('/')[0]
-      const validation = inspector.validate(schema[param], req.body)
-      if (validation.valid) {
-        return next()
+      // if single item passed in, wrap it in an array in order to run through loop
+      if (!Array.isArray(req.body)) {
+        req.body = [req.body]
       }
-      return res.status(400).send(validation.format())
+      let iterations = 0
+      for (const item of req.body) {
+        iterations++
+        const validation = inspector.validate(schema[param], item)
+        // if one of the items fails validation, break loop and respond with error
+        if (!validation.valid) {
+          return res.status(400).send(validation.format())
+        }
+        // if loop runs to completion without validation errors, call next
+        if (iterations === req.body.length) return next()
+      }
     }
     return next()
   }
 }
 
 /**
- * Determines if the Etag in the request matches the Etag in the database.
- *
- * @param {String} tableName
- * @param {String} id
- * @param {String} etag
- * @param {Object} connection - the active connection to the database
- * @returns {Promise|Boolean}
- */
+* Determines if the Etag in the request matches the Etag in the database.
+*
+* @param {String} tableName
+* @param {String} id
+* @param {String} etag
+* @param {Object} connection - the active connection to the database
+* @returns {Promise|Boolean}
+*/
 function checkEtag(tableName, id, etag, connection) {
   return r.table(tableName).filter({ id }).run(connection)
   .then(cursor => cursor.next())
@@ -41,7 +51,6 @@ function checkEtag(tableName, id, etag, connection) {
   })
 }
 
-// TODO: create a separate file for each of these db methods, they are going to end up needing much more logic
 
 function createConnection(req, res, next) {
   r.connect(dbConfig)

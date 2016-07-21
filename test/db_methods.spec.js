@@ -75,8 +75,17 @@ describe('db methods', () => {
         if (data.changes[0].new_val.foo) {
           expect(data.changes[0].new_val.foo).toContain('bar')
         }
-        info.done()
-        done()
+        insert(info.table_name, [{ foo: 'baz' }, { poke: 'mon' }], info.rdb_conn)
+        .then(data => {
+          expect(data.changes[0].new_val.foo).toBeTruthy()
+          expect(data.changes[1].new_val.poke).toBeTruthy()
+          if (data.changes[0].new_val.foo && data.changes[1].new_val.poke) {
+            expect(data.changes[0].new_val.foo).toContain('baz')
+            expect(data.changes[1].new_val.poke).toContain('mon')
+            info.done()
+            done()
+          }
+        })
       })
     }, 10000)
   })
