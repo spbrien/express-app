@@ -31,8 +31,13 @@
     "schema-inspector": "^1.6.4"
   },
   "devDependencies": {
+    "babel-eslint": "^6.1.2",
     "btoa": "^1.1.2",
     "chance": "^1.0.3",
+    "eslint": "^3.1.1",
+    "eslint-config-airbnb-base": "^5.0.0",
+    "eslint-plugin-html": "^1.5.1",
+    "eslint-plugin-import": "^1.11.1",
     "portfinder": "^1.0.3",
     "pre-commit": "^1.1.3",
     "q": "^1.4.1",

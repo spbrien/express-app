@@ -103,8 +103,8 @@ describe('db methods', () => {
       findHelper(info, data, { PAGINATION: true, PAGINATION_DEFAULT: 25 }, 25, done)
     }, 20000)
     it('should paginate', done => {
-      const data = fakerFactory(30)
-      findHelper(info, data, { PAGINATION: true, PAGINATION_DEFAULT: 25 }, 5, done, { query: { page: 2 } })
+      const data = fakerFactory(65)
+      findHelper(info, data, { PAGINATION: true, PAGINATION_DEFAULT: 25 }, 15, done, { query: { page: 3 } })
     })
     it('should filter based on query with pagination and sort properly', done => {
       const data = fakerFactory(50)

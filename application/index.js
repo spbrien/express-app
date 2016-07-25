@@ -2,7 +2,7 @@ const routing = require('./routing')
 const auth = require('config/auth').authenticate
 const jwt = require('jsonwebtoken')
 const cors = require('cors')
-const settings = require('config/default-settings')
+const settings = require('config/default_settings')
 
 function factory(app, port) {
   return (config) => {

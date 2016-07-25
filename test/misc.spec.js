@@ -52,7 +52,7 @@ describe('misc', () => {
                   return this
                 },
               }
-              auth.authenticate(req, res, () => {
+              auth.authenticate(true)(req, res, () => {
                 expect(req.authenticated).toBeTruthy()
                 rdb_info.done()
                 done()
