@@ -2,6 +2,7 @@
 module.exports = {
   type: 'object',
   indicies: ['_created'],
+  allowed_methods: ['GET', 'POST', 'PATCH', 'DELETE'],
   properties: {
     title: {
       type: 'string',

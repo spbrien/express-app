@@ -39,6 +39,7 @@ function createTable(config, name, schema, cb) {
     })
     .then(() => {
       // Create secondary indicies for orderBy, filtering etc.
+      /* eslint-disable no-prototype-builtins */
       if (schema.hasOwnProperty('indicies')) {
         schema.indicies.forEach(idx => {
           r.table(name).indexCreate(idx)

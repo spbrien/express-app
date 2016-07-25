@@ -28,12 +28,12 @@
     "passport-local": "^1.0.0",
     "ramda": "^0.21.0",
     "rethinkdb": "^2.3.2",
-    "schema-inspector": "^1.6.4"
+    "schema-inspector": "^1.6.4",
+    "chance": "^1.0.3",
   },
   "devDependencies": {
     "babel-eslint": "^6.1.2",
     "btoa": "^1.1.2",
-    "chance": "^1.0.3",
     "eslint": "^3.1.1",
     "eslint-config-airbnb-base": "^5.0.0",
     "eslint-plugin-html": "^1.5.1",

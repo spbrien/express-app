@@ -7,8 +7,6 @@ const settings = require('../default_settings')
 // passing a truthy param as 'force' will force authentication, even if disabled in settings. This is for unit testing purposes
 function authenticate(force) {
   return (req, res, next) => {
-    console.log(force)
-    console.log(req, res, next)
     if (settings.AUTHENTICATION || force) {
       if (req.headers.authorization && req.headers.authorization.search('Basic ') === 0) {
         // Grab btoa string, decode, and separate username and password into variables

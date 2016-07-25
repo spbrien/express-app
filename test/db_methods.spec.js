@@ -7,6 +7,7 @@ const update = require('../config/db/methods/update')
 const replace = require('../config/db/methods/replace')
 const r = require('rethinkdb')
 const Chance = require('chance')
+
 const chance = new Chance()
 
 
