@@ -1,4 +1,5 @@
 const atob = require('atob')
+const r = require('rethinkdb')
 
 function decodeToken(token) {
   // Grab btoa string, decode, and separate username and password into variables
@@ -12,4 +13,30 @@ function decodeToken(token) {
   return false
 }
 
-module.exports = { decodeToken }
+function parseRelation(schema, result, connection, cb) {
+  if (schema.data_relations) {
+    const relations = schema.data_relations
+    let iterations = 0
+    for (const key of Object.keys(relations)) {
+      iterations++
+      const { field } = relations[key]
+      if (relations[key].embeddable) {
+        for (const item of result._items) {
+          if (item[key]) {
+            r.table(relations[key].resource).filter(row => row(field).eq(item[key])).run(connection)
+            .then(data => data.toArray())
+            /* eslint-disable no-loop-func */
+            .then(d => {
+              item[key] = d[0]
+              if (iterations === Object.keys(relations).length) {
+                cb(result)
+              }
+            })
+          }
+        }
+      }
+    }
+  } else cb(result)
+}
+
+module.exports = { decodeToken, parseRelation }

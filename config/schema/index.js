@@ -1,4 +1,4 @@
-/* eslint-disable global-require, no-shadow import/no-unresolved */
+/* eslint-disable global-require, no-shadow import/no-unresolved, import/no-extraneous-dependencies */
 const fs = require('fs')
 const path = require('path')
 const inflection = require('inflection')

@@ -29,7 +29,7 @@
     "ramda": "^0.21.0",
     "rethinkdb": "^2.3.2",
     "schema-inspector": "^1.6.4",
-    "chance": "^1.0.3",
+    "chance": "^1.0.3"
   },
   "devDependencies": {
     "babel-eslint": "^6.1.2",

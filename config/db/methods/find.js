@@ -90,7 +90,7 @@ function find(tableName, id, req, connection, settings = _settings) {
       })
     }
 
-  // default first page
+    // default first page
     return query.limit(settings.PAGINATION_DEFAULT).run(connection)
     .then(result => {
       return composeResponse(result, constructMeta(tableName, settings.PAGINATION_DEFAULT, connection))

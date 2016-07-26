@@ -14,7 +14,7 @@ function validate(schema) {
     // Hack to get the resource name because for some reason req.params is undefined here
     const param = req.originalUrl.replace('/api/v1/', '').split('/')[0]
 
-    if (schema[param].allowed_methods) {
+    if (schema[param] && schema[param].allowed_methods) {
       if (schema[param].allowed_methods.indexOf(req.method) === -1) {
         return res.status(405).send('Method not alowed')
       }
