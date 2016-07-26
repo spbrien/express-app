@@ -8,4 +8,6 @@ module.exports = {
   USERNAME: 'admin',
   PASSWORD: 'test',
   SECRET_KEY: process.env.SECRET_KEY,
+  CORS: true,
+  AUTHENTICATION: false,
 }

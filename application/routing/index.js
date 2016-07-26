@@ -1,6 +1,8 @@
 const express = require('express')
 const router = new express.Router()
 const auth = require('config/auth').checkToken
+const parseRelation = require('../utils/helpers').parseRelation
+
 function routing(schema) {
   router
   .get('/', (req, res) => {
@@ -13,10 +15,10 @@ function routing(schema) {
     res.send(schema[req.params.name])
   })
   .get('/:name', (req, res) => {
-    if (req.params.name === 'accounts') {
+  /*  if (req.params.name === 'accounts') {
       res.status(405).send('Method not allowed')
-    } else {
-      req.db.find(req.params.name)
+    } else { */
+    req.db.find(req.params.name)
       .then((results) => {
         // _meta and result are both promises so we need to resolve them individually before sending response
         Promise.resolve(results.result)
@@ -24,11 +26,13 @@ function routing(schema) {
           Promise.resolve(results._meta)
           .then(meta => {
             const response = { _items: data, _meta: meta }
-            res.send(response)
+            parseRelation(schema[req.params.name], response, req.connection, data => {
+              res.send(data)
+            })
           })
         })
       }, err => res.status(404).send(err.msg))
-    }
+  //  }
   })
   .get('/:name/:id', (req, res) => {
     const { params, db } = req

@@ -1,18 +1,25 @@
 const r = require('rethinkdb')
 const inspector = require('schema-inspector')
+const methods = require('./methods')
+
 const dbConfig = {
   host: process.env.DB_HOST,
   port: process.env.DB_PORT,
   db: process.env.DB_NAME,
 }
 
-const methods = require('./methods')
 
 function validate(schema) {
   return (req, res, next) => {
+    // Hack to get the resource name because for some reason req.params is undefined here
+    const param = req.originalUrl.replace('/api/v1/', '').split('/')[0]
+
+    if (schema[param] && schema[param].allowed_methods) {
+      if (schema[param].allowed_methods.indexOf(req.method) === -1) {
+        return res.status(405).send('Method not alowed')
+      }
+    }
     if (req.method !== 'GET' && req.method !== 'DELETE') {
-      // Hack to get the resource name because for some reason req.params is undefined here
-      const param = req.originalUrl.replace('/api/v1/', '').split('/')[0]
       // if single item passed in, wrap it in an array in order to run through loop
       if (!Array.isArray(req.body)) {
         req.body = [req.body]

@@ -2,7 +2,18 @@
 module.exports = {
   type: 'object',
   indicies: ['_created'],
+  allowed_methods: ['GET', 'POST', 'PATCH', 'DELETE'],
+  data_relations: {
+    created_by: {
+      resource: 'accounts',
+      field: 'id',
+      embeddable: true,
+    },
+  },
   properties: {
+    created_by: {
+      type: 'string',
+    },
     title: {
       type: 'string',
       minlength: 1,
