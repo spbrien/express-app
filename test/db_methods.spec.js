@@ -78,6 +78,10 @@ describe('db methods', () => {
         insert(info.table_name, [{ foo: 'baz' }, { poke: 'mon' }], info.rdb_conn)
         .then(data => {
           expect(data.changes[0].new_val.foo).toBeTruthy()
+          expect(data.changes[0].new_val._created).toBeTruthy()
+          expect(data.changes[1].new_val._created).toBeTruthy()
+          expect(data.changes[0].new_val._etag).toBeTruthy()
+          expect(data.changes[1].new_val._etag).toBeTruthy()
           expect(data.changes[1].new_val.poke).toBeTruthy()
           if (data.changes[0].new_val.foo && data.changes[1].new_val.poke) {
             expect(data.changes[0].new_val.foo).toContain('baz')
