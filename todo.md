@@ -8,3 +8,5 @@
 * Fix sort and where if pagination disabled
 * ~~Header error with embedded resources~~
 * ~~fix result._items || result bug in parseRelation~~
+* Opt out of pagination with a query string
+* Opt out of embed with query string

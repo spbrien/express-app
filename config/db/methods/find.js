@@ -97,7 +97,7 @@ function find(tableName, id, req, connection, settings = _settings) {
     })
   }
   // return all items if pagination disabled
-  return r.table(tableName).run(connection)
+  return query.run(connection)
   .then(result => {
     return composeResponse(result)
   })
