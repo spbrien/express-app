@@ -21,18 +21,19 @@ function parseRelation(schema, result, connection, cb) {
       iterations++
       const { field } = relations[key]
       if (relations[key].embeddable) {
-        for (const item of result._items) {
+        for (const item of result._items || result) {
           if (item[key]) {
             r.table(relations[key].resource).filter(row => row(field).eq(item[key])).run(connection)
             .then(data => data.toArray())
             /* eslint-disable no-loop-func */
             .then(d => {
               item[key] = d[0]
+              console.log(item[key])
               if (iterations === Object.keys(relations).length) {
                 cb(result)
               }
             })
-          }
+          } else cb(result)
         }
       }
     }

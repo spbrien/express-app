@@ -37,7 +37,10 @@ function routing(schema) {
   .get('/:name/:id', (req, res) => {
     const { params, db } = req
     db.find(params.name, params.id).then(results => {
-      res.send(results)
+      parseRelation(schema[req.params.name], results, req.connection, data => {
+        res.send(data)
+      })
+      // res.send(results)
     }, err => res.status(404).send(err.msg))
   })
   .post('/:name', auth, (req, res) => {
