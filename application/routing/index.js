@@ -26,6 +26,7 @@ function routing(schema) {
           Promise.resolve(results._meta)
           .then(meta => {
             const response = { _items: data, _meta: meta }
+            console.log(response)
             parseRelation(schema[req.params.name], response, req.connection, data => {
               res.send(data)
             })

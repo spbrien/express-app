@@ -63,6 +63,7 @@ function find(tableName, id, req, connection, settings = _settings) {
   }
   // handle sorting of results
   if (req.query && req.query.sort) {
+    console.log('yup')
     const q = req.query.sort
     // e.g '?sort=-author' should sort descending, else ascending by default
     query = (q.substring(0, 1) === '-') ? query.orderBy(r.desc(q.slice(1, q.length))) : query.orderBy(r.asc(q))
@@ -73,6 +74,7 @@ function find(tableName, id, req, connection, settings = _settings) {
 
   // filter if necessary
   if (where) {
+    console.log(where)
     query = query.filter(where)
   }
 
