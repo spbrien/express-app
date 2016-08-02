@@ -60,6 +60,10 @@ function find(tableName, id, req, connection, settings = _settings) {
   // parse query string into JSON
   if (req.query && req.query.where) {
     where = JSON.parse(req.query.where)
+    // filter if necessary
+    if (where) {
+      query = query.filter(where)
+    }
   }
   // handle sorting of results
   if (req.query && req.query.sort) {
@@ -69,11 +73,6 @@ function find(tableName, id, req, connection, settings = _settings) {
   } else {
     // sort by _created in descending order by default
     query = query.orderBy(settings._CREATED_INDEX ? { index: r.desc('_created') } : r.desc('_created'))
-  }
-
-  // filter if necessary
-  if (where) {
-    query = query.filter(where)
   }
 
   if (id) {
