@@ -1,7 +1,9 @@
+
 const express = require('express')
 const router = new express.Router()
-const auth = require('config/auth').checkToken
+const auth = require('../../config/auth').checkToken
 const parseRelation = require('../utils/helpers').parseRelation
+const co = require('co')
 
 function routing(schema) {
   router
@@ -15,24 +17,21 @@ function routing(schema) {
     res.send(schema[req.params.name])
   })
   .get('/:name', (req, res) => {
-  /*  if (req.params.name === 'accounts') {
-      res.status(405).send('Method not allowed')
-    } else { */
-    req.db.find(req.params.name)
-      .then((results) => {
-        // _meta and result are both promises so we need to resolve them individually before sending response
-        Promise.resolve(results.result)
-        .then(data => {
-          Promise.resolve(results._meta)
-          .then(meta => {
-            const response = { _items: data, _meta: meta }
-            parseRelation(schema[req.params.name], response, req.connection, data => {
-              res.send(data)
-            })
-          })
+    co(function* () {
+      const results = yield req.db.find(req.params.name)
+
+      if (results) {
+        const { _items, _meta } = {
+          _items: yield results.result,
+          _meta: yield results._meta,
+        }
+
+        const response = { _items, _meta }
+        parseRelation(schema[req.params.name], response, req.connection, data => {
+          res.send(data)
         })
-      }, err => res.status(404).send(err.msg))
-  //  }
+      } else res.status(404).send('Resource not found')
+    })
   })
   .get('/:name/:id', (req, res) => {
     const { params, db } = req
@@ -40,7 +39,6 @@ function routing(schema) {
       parseRelation(schema[req.params.name], results, req.connection, data => {
         res.send(data)
       })
-      // res.send(results)
     }, err => res.status(404).send(err.msg))
   })
   .post('/:name', auth, (req, res) => {

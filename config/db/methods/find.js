@@ -1,10 +1,13 @@
+
+
 const r = require('rethinkdb')
 const _settings = require('../../../config/default_settings')
-
+const co = require('co')
 
 function composeResponse(result, _meta) {
   const response = {
     result: result.toArray(),
+    _meta: {},
   }
 
   if (_meta) {
@@ -33,11 +36,12 @@ function getCount(tableName, connection) {
 * @param {Integer} max_results
 * @returns {Object}
 */
-function constructMeta(tableName, max_results, connection, page = 1) {
-  return getCount(tableName, connection).then(data => {
+function constructMeta(tableName, max_results, page, connection) {
+  return co(function* () {
+    const total = yield getCount(tableName, connection)
     return {
       max_results,
-      total: data,
+      total,
       page: parseInt(page),
     }
   })
@@ -85,14 +89,14 @@ function find(tableName, id, req, connection, settings = _settings) {
     if (req.query && req.query.page) {
       return query.skip((req.query.page - 1) * settings.PAGINATION_DEFAULT).limit(settings.PAGINATION_DEFAULT).run(connection)
       .then(result => {
-        return composeResponse(result, constructMeta(tableName, settings.PAGINATION_DEFAULT, connection, req.query.page))
+        return composeResponse(result, constructMeta(tableName, settings.PAGINATION_DEFAULT, req.query.page, connection))
       })
     }
 
     // default first page
     return query.limit(settings.PAGINATION_DEFAULT).run(connection)
     .then(result => {
-      return composeResponse(result, constructMeta(tableName, settings.PAGINATION_DEFAULT, connection))
+      return composeResponse(result, constructMeta(tableName, settings.PAGINATION_DEFAULT, 1, connection))
     })
   }
   // return all items if pagination disabled
