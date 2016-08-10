@@ -15,11 +15,14 @@ describe('misc', () => {
           .then(data => {
             const etag = data.changes[0].new_val._etag
             const id = data.changes[0].new_val.id
-            checkEtag(rdb_info.table_name, id, etag, rdb_info.rdb_conn).then(data => {
+            expect(checkEtag(rdb_info.table_name, id, etag, rdb_info.rdb_conn)).toBeTruthy()
+            rdb_info.done()
+            done()
+          /*  checkEtag(rdb_info.table_name, id, etag, rdb_info.rdb_conn).then(data => {
               expect(data).toBeTruthy()
               rdb_info.done()
               done()
-            })
+            }) */
           })
         })
       })

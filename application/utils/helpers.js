@@ -23,7 +23,7 @@ function decodeToken(token) {
  * @returns {Object} result with embedded resources
  */
 function parseRelation(schema, result, connection, cb) {
-  if (schema.data_relations) {
+  if (schema.data_relations && result.length) {
     const relations = schema.data_relations
     let iterations = 0
     // iterate over each field in a schema's data_relations
