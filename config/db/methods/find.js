@@ -9,7 +9,6 @@ function composeResponse(result, _meta) {
     result: result.toArray(),
     _meta: {},
   }
-
   if (_meta) {
     response._meta = _meta
   }
@@ -39,6 +38,7 @@ function getCount(tableName, connection) {
 function constructMeta(tableName, max_results, page, connection) {
   return co(function* () {
     const total = yield getCount(tableName, connection)
+    console.log(total)
     return {
       max_results,
       total,
@@ -80,7 +80,7 @@ function find(tableName, id, req, connection, settings = _settings) {
   }
 
   if (id) {
-    return r.table(tableName).filter({ id }).run(connection)
+    return query.filter({ id }).run(connection)
     .then(result => result.toArray())
   }
   // handles pagination if enabled in settings

@@ -17,7 +17,7 @@ const port = process.env.PORT || 3000
 app.use(morgan('dev'))
 app.use(bodyParser.json())
 app.set('secret', md5(settings.SECRET_KEY))
-app.set('models', config.schema)
+
 // Init Application
 factory(app, port)(config)
 

@@ -25,7 +25,6 @@ function routing(schema) {
           _items: yield results.result,
           _meta: yield results._meta,
         }
-
         const response = { _items, _meta }
         parseRelation(schema[req.params.name], response, req.connection, data => {
           res.send(data)
@@ -49,7 +48,7 @@ function routing(schema) {
   .put('/:name/:id', auth, (req, res) => {
     const { body, db, params } = req
     db.replace(params.name, params.id, body)
-    .then(data => res.send(data), err => res.send(err))
+    .then(data => res.send(data), err => res.status(412).send(err))
   })
   .patch('/:name/:id', auth, (req, res) => {
     const { body, db, params } = req

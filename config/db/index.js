@@ -76,22 +76,14 @@ function createConnection(req, res, next) {
           return methods.update(tableName, id, data, connection)
         }
         return new Promise((resolve, reject) => reject('Etag mismatch'))
-      /*  return checkEtag(tableName, id, req.headers['if-match'], connection)
-        .then(match => {
-          if (match) {
-            return methods.update(tableName, id, data, connection)
-          }
-          return new Promise((resolve, reject) => reject('Etag mismatch'))
-        }) */
       },
       replace(tableName, id, data) {
-        return checkEtag(tableName, id, req.headers['if-match'], connection)
-        .then(match => {
-          if (match) {
-            return methods.replace(tableName, id, data, connection)
-          }
-          return new Promise((resolve, reject) => reject('Etag mismatch'))
-        })
+        if (Array.isArray(data)) data = data[0]
+
+        if (checkEtag(tableName, id, req.headers['if-match'], connection)) {
+          return methods.replace(tableName, id, data, connection)
+        }
+        return new Promise((resolve, reject) => reject('Etag mismatch'))
       },
       delete(tableName, id) {
         return r.table(tableName).get(id).delete()
