@@ -18,11 +18,6 @@ describe('misc', () => {
             expect(checkEtag(rdb_info.table_name, id, etag, rdb_info.rdb_conn)).toBeTruthy()
             rdb_info.done()
             done()
-          /*  checkEtag(rdb_info.table_name, id, etag, rdb_info.rdb_conn).then(data => {
-              expect(data).toBeTruthy()
-              rdb_info.done()
-              done()
-            }) */
           })
         })
       })

@@ -2,7 +2,7 @@
 module.exports = {
   type: 'object',
   indicies: ['_created'],
-  allowed_methods: ['GET', 'POST', 'PATCH', 'DELETE'],
+  allowed_methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
   data_relations: {
     created_by: {
       resource: 'accounts',

@@ -42,6 +42,7 @@ function findHelper(info, data, settings, expect_length, done, req = {}, id = nu
   .then(() => {
     find(info.table_name, id, req, info.rdb_conn, settings)
     .then(data => {
+      console.log(data)
       Promise.resolve(data.result)
       .then(data => {
         if (sort) {
