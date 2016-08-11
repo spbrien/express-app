@@ -13,6 +13,7 @@ module.exports = {
   properties: {
     created_by: {
       type: 'string',
+      optional: true,
     },
     title: {
       type: 'string',

@@ -1,7 +1,7 @@
 const r = require('rethinkdb')
 const inspector = require('schema-inspector')
 const methods = require('./methods')
-
+const co = require('co')
 const dbConfig = {
   host: process.env.DB_HOST,
   port: process.env.DB_PORT,
@@ -47,13 +47,12 @@ function validate(schema) {
 * @param {String} id
 * @param {String} etag
 * @param {Object} connection - the active connection to the database
-* @returns {Promise|Boolean}
+* @returns {Boolean}
 */
 function checkEtag(tableName, id, etag, connection) {
-  return r.table(tableName).filter({ id }).run(connection)
-  .then(cursor => cursor.next())
-  .then(data => {
-    if (data._etag === etag) return true
+  return co(function* () {
+    const result = yield r.table(tableName).filter({ id }).run(connection)
+    if (result._etag === etag) return true
     return false
   })
 }
@@ -71,13 +70,19 @@ function createConnection(req, res, next) {
         return methods.insert(tableName, data, connection)
       },
       update(tableName, id, data) {
-        return checkEtag(tableName, id, req.headers['if-match'], connection)
+        if (Array.isArray(data)) data = data[0]
+
+        if (checkEtag(tableName, id, req.headers['if-match'], connection)) {
+          return methods.update(tableName, id, data, connection)
+        }
+        return new Promise((resolve, reject) => reject('Etag mismatch'))
+      /*  return checkEtag(tableName, id, req.headers['if-match'], connection)
         .then(match => {
           if (match) {
             return methods.update(tableName, id, data, connection)
           }
           return new Promise((resolve, reject) => reject('Etag mismatch'))
-        })
+        }) */
       },
       replace(tableName, id, data) {
         return checkEtag(tableName, id, req.headers['if-match'], connection)

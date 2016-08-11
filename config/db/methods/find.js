@@ -1,17 +1,20 @@
+
+
 const r = require('rethinkdb')
 const _settings = require('../../../config/default_settings')
-
+const co = require('co')
 
 function composeResponse(result, _meta) {
-  if (_meta) {
-    return {
-      result: result.toArray(),
-      _meta,
-    }
-  }
-  return {
+  const response = {
     result: result.toArray(),
+    _meta: {},
   }
+
+  if (_meta) {
+    response._meta = _meta
+  }
+
+  return response
 }
 
 /**
@@ -33,11 +36,12 @@ function getCount(tableName, connection) {
 * @param {Integer} max_results
 * @returns {Object}
 */
-function constructMeta(tableName, max_results, connection, page = 1) {
-  return getCount(tableName, connection).then(data => {
+function constructMeta(tableName, max_results, page, connection) {
+  return co(function* () {
+    const total = yield getCount(tableName, connection)
     return {
       max_results,
-      total: data,
+      total,
       page: parseInt(page),
     }
   })
@@ -60,6 +64,10 @@ function find(tableName, id, req, connection, settings = _settings) {
   // parse query string into JSON
   if (req.query && req.query.where) {
     where = JSON.parse(req.query.where)
+    // filter if necessary
+    if (where) {
+      query = query.filter(where)
+    }
   }
   // handle sorting of results
   if (req.query && req.query.sort) {
@@ -69,11 +77,6 @@ function find(tableName, id, req, connection, settings = _settings) {
   } else {
     // sort by _created in descending order by default
     query = query.orderBy(settings._CREATED_INDEX ? { index: r.desc('_created') } : r.desc('_created'))
-  }
-
-  // filter if necessary
-  if (where) {
-    query = query.filter(where)
   }
 
   if (id) {
@@ -86,18 +89,18 @@ function find(tableName, id, req, connection, settings = _settings) {
     if (req.query && req.query.page) {
       return query.skip((req.query.page - 1) * settings.PAGINATION_DEFAULT).limit(settings.PAGINATION_DEFAULT).run(connection)
       .then(result => {
-        return composeResponse(result, constructMeta(tableName, settings.PAGINATION_DEFAULT, connection, req.query.page))
+        return composeResponse(result, constructMeta(tableName, settings.PAGINATION_DEFAULT, req.query.page, connection))
       })
     }
 
     // default first page
     return query.limit(settings.PAGINATION_DEFAULT).run(connection)
     .then(result => {
-      return composeResponse(result, constructMeta(tableName, settings.PAGINATION_DEFAULT, connection))
+      return composeResponse(result, constructMeta(tableName, settings.PAGINATION_DEFAULT, 1, connection))
     })
   }
   // return all items if pagination disabled
-  return r.table(tableName).run(connection)
+  return query.run(connection)
   .then(result => {
     return composeResponse(result)
   })
