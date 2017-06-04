@@ -25,20 +25,16 @@ function validate(schema) {
       if (!Array.isArray(req.body)) {
         req.body = [req.body]
       }
-      let iterations = 0
       for (const item of req.body) {
-        iterations++
         const validation = inspector.validate(schema[param], item)
-        // TODO: validate relationships?
         // if one of the items fails validation, break loop and respond with error
         if (!validation.valid) {
           return res.status(400).send(validation.format())
         }
-        // if loop runs to completion without validation errors, call next
-        if (iterations === req.body.length) return next()
+        // TODO: validate relationships?
       }
     }
-    return next()
+    next()
   }
 }
 
@@ -61,6 +57,8 @@ function checkEtag(tableName, id, etag, connection) {
 
 
 function createConnection(req, res, next) {
+  console.log("RUNNING CREATE CONNECTION")
+
   r.connect(dbConfig)
   .then((connection) => {
     req.connection = connection
@@ -92,12 +90,18 @@ function createConnection(req, res, next) {
         .run(connection)
       },
     }
+
+    console.log("FINISHING CONNECTION PROMISE")
+  })
+  .finally(() => {
+    console.log('should be calling next now')
     next()
   })
 }
 
 
 function closeConnection(req, res, next) {
+  console.log("RUNNING CLOSE CONNECTION")
   req.connection.close()
   next()
 }

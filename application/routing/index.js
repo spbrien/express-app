@@ -1,6 +1,6 @@
 
 const express = require('express')
-const router = new express.Router()
+const router = express.Router()
 const auth = require('../../config/auth').checkToken
 const parseRelation = require('../utils/helpers').parseRelation
 const co = require('co')
@@ -40,22 +40,22 @@ function routing(schema) {
       })
     }, err => res.status(404).send(err.msg))
   })
-  .post('/:name', auth, (req, res) => {
+  .post('/:name', (req, res) => {
     const { body, db, params } = req
     db.insert(params.name, body)
     .then(data => res.send(data), err => res.send(err))
   })
-  .put('/:name/:id', auth, (req, res) => {
+  .put('/:name/:id', (req, res) => {
     const { body, db, params } = req
     db.replace(params.name, params.id, body)
     .then(data => res.send(data), err => res.status(412).send(err))
   })
-  .patch('/:name/:id', auth, (req, res) => {
+  .patch('/:name/:id', (req, res) => {
     const { body, db, params } = req
     db.update(params.name, params.id, body)
     .then(data => res.send(data), err => res.status(412).send(err))
   })
-  .delete('/:name/:id', auth, (req, res) => {
+  .delete('/:name/:id', (req, res) => {
     const { name, id } = req.params
     req.db.delete(name, id)
     .then(data => res.send(data), err => res.send(err))

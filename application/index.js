@@ -11,14 +11,11 @@ function factory(app, port) {
       app.use(cors())
     }
 
-    // Schema validation
-    app.use(config.db.validate(config.schema))
-
     // Set up connection to rethinkdb
-    app.use(config.db.createConnection)
+    app.use(config.db.validate(config.schema), config.db.createConnection)
 
     // Set up Main Routing
-    app.use('/api/v1', token, routing(config.schema))
+    app.use('/api/v1', routing(config.schema))
 
     // close db connection
     app.use(config.db.closeConnection)

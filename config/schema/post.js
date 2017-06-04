@@ -17,17 +17,19 @@ module.exports = {
     },
     title: {
       type: 'string',
-      minlength: 1,
-      maxlength: 100,
+      minLength: 1,
+      maxLength: 10,
     },
     author: {
       type: 'string',
-      minlength: 1,
-      maxlength: 100,
+      minLength: 1,
+      maxLength: 100,
+      optional: true,
     },
     featured: {
       type: 'boolean',
       def: false,
+      optional: true,
     },
   },
   allowedUsers: [],
