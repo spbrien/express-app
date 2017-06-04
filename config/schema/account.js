@@ -17,4 +17,9 @@ module.exports = {
       maxlength: 30,
     },
   },
+  allowedUsers: [],
+  allowedRoles: [],
+  metadata: {
+
+  },
 }

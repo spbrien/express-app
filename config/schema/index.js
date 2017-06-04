@@ -13,6 +13,7 @@ inflection.lowerize = function (str) {
 }
 
 // Find all models from the current directory
+// TODO: Add schema directory in the project root, so we can separate user models from default
 module.exports = fs
 .readdirSync(__dirname)
 .filter(file => (file.indexOf('.') !== 0) && (file !== 'index.js'))

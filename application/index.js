@@ -23,7 +23,7 @@ function factory(app, port) {
     // close db connection
     app.use(config.db.closeConnection)
 
-
+    // Auth endpoint for getting or exchanging JWTs
     app.get('/auth', config.db.createConnection, auth, (req, res) => {
       const token = jwt.sign(req.user, app.get('secret'), { expiresIn: '2h' })
       res.json({

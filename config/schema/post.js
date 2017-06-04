@@ -30,4 +30,9 @@ module.exports = {
       def: false,
     },
   },
+  allowedUsers: [],
+  allowedRoles: [],
+  metadata: {
+
+  },
 }

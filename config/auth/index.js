@@ -36,6 +36,7 @@ function authenticate(force) {
 }
 
 function checkToken(req, res, next) {
+  // TODO: Check token only based on authentication config in the schema definition
   if (settings.AUTHENTICATION) {
     const token = decodeToken(req.headers.authorization).password
     if (token) {
