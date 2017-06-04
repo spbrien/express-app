@@ -26,6 +26,7 @@ function routing(schema) {
           _meta: yield results._meta,
         }
         const response = { _items, _meta }
+        // TODO: remove parse relation function once JOINs or subqueries exist
         parseRelation(schema[req.params.name], response, req.connection, data => {
           res.send(data)
         })
@@ -35,6 +36,7 @@ function routing(schema) {
   .get('/:name/:id', (req, res) => {
     const { params, db } = req
     db.find(params.name, params.id).then(results => {
+      // TODO: remove parse relation function once JOINs or subqueries exist
       parseRelation(schema[req.params.name], results, req.connection, data => {
         res.send(data)
       })

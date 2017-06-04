@@ -65,7 +65,7 @@ function find(tableName, id, req, connection, settings = _settings) {
   // If we have an id, return the query immediately
   if (id) {
     query = query.filter({ id })
-    // TODO: JOINs
+    // TODO: JOINs or subqueries https://www.rethinkdb.com/docs/table-joins/
     return query.run(connection)
     .then(result => result.toArray())
   }
@@ -76,7 +76,7 @@ function find(tableName, id, req, connection, settings = _settings) {
     // filter if necessary
     if (where) {
       query = query.filter(where)
-      // TODO: JOINs
+      // TODO: JOINs or subqueries https://www.rethinkdb.com/docs/table-joins/
     }
   }
 

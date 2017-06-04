@@ -13,6 +13,7 @@ function decodeToken(token) {
   return false
 }
 
+// TODO: Replace this entire function by using JOINs or Subqueries in the config/db/methods files
 /**
  * Parses "data_relations" of a schema and supplies embedded resources if enabled
  *
@@ -27,7 +28,6 @@ function parseRelation(schema, result, connection, cb) {
     const relations = schema.data_relations
     let iterations = 0
     // iterate over each field in a schema's data_relations
-    // TODO: replace all of these for loops... wtf?
     for (const key of Object.keys(relations)) {
       iterations++
       const { field } = relations[key]
@@ -36,7 +36,6 @@ function parseRelation(schema, result, connection, cb) {
         const res = result._items ? result._items : result
         let resultIterations = 0
         let match = false
-        // TODO: replace all of these for loops... wtf?
         for (const item of res) {
           resultIterations++
           if (item[key]) {
