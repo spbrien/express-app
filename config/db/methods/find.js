@@ -61,14 +61,25 @@ function constructMeta(tableName, max_results, page, connection) {
 function find(tableName, id, req, connection, settings = _settings) {
   let where = null
   let query = r.table(tableName)
+
+  // If we have an id, return the query immediately
+  if (id) {
+    query = query.filter({ id })
+    // TODO: JOINs
+    return query.run(connection)
+    .then(result => result.toArray())
+  }
+
   // parse query string into JSON
   if (req.query && req.query.where) {
     where = JSON.parse(req.query.where)
     // filter if necessary
     if (where) {
       query = query.filter(where)
+      // TODO: JOINs
     }
   }
+
   // handle sorting of results
   if (req.query && req.query.sort) {
     const q = req.query.sort
@@ -79,10 +90,6 @@ function find(tableName, id, req, connection, settings = _settings) {
     query = query.orderBy(settings._CREATED_INDEX ? { index: r.desc('_created') } : r.desc('_created'))
   }
 
-  if (id) {
-    return query.filter({ id }).run(connection)
-    .then(result => result.toArray())
-  }
   // handles pagination if enabled in settings
   if (settings.PAGINATION && settings.PAGINATION_DEFAULT) {
     // if 'page' query string is passed

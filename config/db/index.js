@@ -12,6 +12,7 @@ const dbConfig = {
 function validate(schema) {
   return (req, res, next) => {
     // Hack to get the resource name because for some reason req.params is undefined here
+    // TODO: figure out why req.params is undefined
     const param = req.originalUrl.replace('/api/v1/', '').split('/')[0]
 
     if (schema[param] && schema[param].allowed_methods) {
@@ -28,6 +29,7 @@ function validate(schema) {
       for (const item of req.body) {
         iterations++
         const validation = inspector.validate(schema[param], item)
+        // TODO: validate relationships?
         // if one of the items fails validation, break loop and respond with error
         if (!validation.valid) {
           return res.status(400).send(validation.format())
