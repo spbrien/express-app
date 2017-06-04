@@ -1,5 +1,6 @@
 const routing = require('./routing')
-const auth = require('config/auth').authenticate
+const auth = require('config/auth').authenticate()
+const token = require('config/auth').checkToken
 const jwt = require('jsonwebtoken')
 const cors = require('cors')
 const settings = require('config/default_settings')
@@ -9,6 +10,7 @@ function factory(app, port) {
     if (settings.CORS) {
       app.use(cors())
     }
+
     // Schema validation
     app.use(config.db.validate(config.schema))
 
@@ -16,7 +18,7 @@ function factory(app, port) {
     app.use(config.db.createConnection)
 
     // Set up Main Routing
-    app.use('/api/v1', routing(config.schema))
+    app.use('/api/v1', token, routing(config.schema))
 
     // close db connection
     app.use(config.db.closeConnection)
