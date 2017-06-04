@@ -25,6 +25,7 @@ function validate(schema) {
       if (!Array.isArray(req.body)) {
         req.body = [req.body]
       }
+      // TODO: Replace for loop... wtf?
       for (const item of req.body) {
         const validation = inspector.validate(schema[param], item)
         // if one of the items fails validation, break loop and respond with error

@@ -6,6 +6,7 @@ function insert(tableName, data, connection) {
   if (!Array.isArray(data)) {
     data = [data]
   }
+  // TODO: replace all of these for loops... wtf?
   for (const item of data) {
     iterations++
     item._created = r.now()
