@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jasmine-node-karma test --forceexit",
-    "test-dev": "jasmine-node-karma test --autotest"
+    "test": "echo 'Check TODOs'",
+    "test-dev": "echo 'Check TODOs'"
   },
   "author": "",
   "license": "ISC",
