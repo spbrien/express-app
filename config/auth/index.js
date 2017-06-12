@@ -41,7 +41,6 @@ function authenticate(force) {
 }
 
 function checkToken(req, res, next) {
-  // TODO: Check token only based on authentication config in the schema definition
   const resource = req.originalUrl.replace('/api/v1/', '').split('/')[0]
   const method = req.method
 
