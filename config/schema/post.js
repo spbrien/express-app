@@ -18,7 +18,7 @@ module.exports = {
     title: {
       type: 'string',
       minLength: 1,
-      maxLength: 10,
+      maxLength: 100,
     },
     author: {
       type: 'string',
@@ -34,8 +34,12 @@ module.exports = {
   },
   auth: {
     GET: {
-      allowedRoles: [],
-      allowedUsers: [],
+      allowedRoles: ['admin'],
+      allowedUsers: ['admin'],
+    },
+    POST: {
+      allowedRoles: ['admin'],
+      allowedUsers: ['admin'],
     },
   },
   metadata: {

@@ -100,9 +100,14 @@ function closeConnection(req, res, next) {
   next()
 }
 
+function socketConnection() {
+  return r.connect(dbConfig)
+}
+
 module.exports = {
   createConnection,
   closeConnection,
+  socketConnection,
   dbConfig,
   validate,
   checkEtag,

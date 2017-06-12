@@ -5,8 +5,11 @@ const jwt = require('jsonwebtoken')
 const cors = require('cors')
 const db = require('./db')
 const settings = require('../config/default_settings')
+const path = require('path')
+const ioFactory = require('./websockets')
 
 function factory(app, port) {
+
   return (config) => {
     if (settings.CORS) {
       app.use(cors())
@@ -23,17 +26,33 @@ function factory(app, port) {
 
     // Auth endpoint for getting or exchanging JWTs
     app.get('/auth', db.createConnection, auth, (req, res) => {
-      const token = jwt.sign(req.user, app.get('secret'), { expiresIn: '2h' })
-      res.json({
-        success: true,
-        user: req.user.username,
-        token,
-      })
+      if (settings.AUTHENTICATION) {
+        const token = jwt.sign(req.user, app.get('secret'), { expiresIn: '2h' })
+        res.json({
+          success: true,
+          user: req.user.username,
+          token,
+        })
+      } else {
+        res.json({
+          success: true,
+        })
+      }
+    })
+
+    // Static index
+    app.get('/', function(req, res) {
+      res.sendFile(path.join(__dirname + '/../index.html'))
     })
 
     // Listen
      /* eslint-disable no-console */
-    app.listen(port, () => console.log(`Running on port ${port}\n`))
+    const server = app.listen(port, () => console.log(`Running on port ${port}\n`))
+    const io = require('socket.io').listen(server);
+
+    // Websockets
+    ioFactory(io, app.get('secret'))
+
     return app
   }
 }
