@@ -5,6 +5,7 @@ const auth = require('../auth').checkToken
 const parseRelation = require('../utils/helpers').parseRelation
 const co = require('co')
 
+// TODO: implement etags / concurrency controls
 function routing(schema) {
   router
   .get('/', (req, res) => {
@@ -61,6 +62,7 @@ function routing(schema) {
   })
   .delete('/:name/:id', (req, res) => {
     const { name, id } = req.params
+    // TODO: concurrency control
     req.db.delete(name, id)
     .then(data => res.send(data), err => res.send(err))
   })
