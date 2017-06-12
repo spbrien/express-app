@@ -59,7 +59,7 @@ function constructMeta(tableName, max_results, page, connection) {
 */
 function find(tableName, id, req, connection, settings = _settings) {
   let where = null
-  let query = r.table(tableName)
+  let query = r.table(tableName) || null
 
   // If we have an id, return the query immediately
   if (id) {

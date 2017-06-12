@@ -31,6 +31,8 @@ function routing(schema) {
           res.send(data)
         })
       } else res.status(404).send('Resource not found')
+    }).catch(() => {
+      res.status(404).send('Resource not found')
     })
   })
   .get('/:name/:id', (req, res) => {
