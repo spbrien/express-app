@@ -40,11 +40,6 @@ function factory(app, port) {
       }
     })
 
-    // Static index
-    app.get('/', function(req, res) {
-      res.sendFile(path.join(__dirname + '/../index.html'))
-    })
-
     // Listen
      /* eslint-disable no-console */
     const server = app.listen(port, () => console.log(`Running on port ${port}\n`))
