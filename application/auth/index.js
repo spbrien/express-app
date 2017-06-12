@@ -74,7 +74,36 @@ function checkToken(req, res, next) {
   } else next()
 }
 
+function socketToken(resource, token, secret, cb) {
+  const permissions = schema[resource] ? schema[resource].auth : null
+  const allowedRoles = permissions && permissions['GET'] ? permissions['GET'].allowedRoles : null
+  const allowedUsers = permissions && permissions['GET'] ? permissions['GET'].allowedUsers : null
+
+  if (settings.AUTHENTICATION && permissions) {
+    if (token) {
+      /* eslint-disable no-unused-vars */
+      jwt.verify(token, secret, (err, decoded) => {
+        if (!err) {
+          if (allowedUsers || allowedRoles) {
+            const userinfo = jwt.decode(token)
+            if (R.contains(userinfo.username, allowedUsers) || R.intersection(userinfo.roles, allowedRoles).length > 0) {
+              cb()
+            } else {
+              cb(new Error('Authentication error'))
+            }
+          } else {
+            cb(new Error('Authentication error'))
+          }
+        }
+      })
+      return cb(new Error('Authentication error'))
+    } else cb(new Error('Authentication error'))
+  } else cb()
+}
+
+
 module.exports = {
   authenticate,
   checkToken,
+  socketToken,
 }

@@ -34,8 +34,12 @@ module.exports = {
   },
   auth: {
     GET: {
-      allowedRoles: [],
-      allowedUsers: [],
+      allowedRoles: ['admin'],
+      allowedUsers: ['admin'],
+    },
+    POST: {
+      allowedRoles: ['admin'],
+      allowedUsers: ['admin'],
     },
   },
   metadata: {

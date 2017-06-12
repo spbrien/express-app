@@ -26,12 +26,18 @@ function factory(app, port) {
 
     // Auth endpoint for getting or exchanging JWTs
     app.get('/auth', db.createConnection, auth, (req, res) => {
-      const token = jwt.sign(req.user, app.get('secret'), { expiresIn: '2h' })
-      res.json({
-        success: true,
-        user: req.user.username,
-        token,
-      })
+      if (settings.AUTHENTICATION) {
+        const token = jwt.sign(req.user, app.get('secret'), { expiresIn: '2h' })
+        res.json({
+          success: true,
+          user: req.user.username,
+          token,
+        })
+      } else {
+        res.json({
+          success: true,
+        })
+      }
     })
 
     // Static index
@@ -45,7 +51,7 @@ function factory(app, port) {
     const io = require('socket.io').listen(server);
 
     // Websockets
-    ioFactory(io)
+    ioFactory(io, app.get('secret'))
 
     return app
   }
