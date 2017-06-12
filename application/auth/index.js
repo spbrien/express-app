@@ -1,9 +1,9 @@
 const bcrypt = require('bcrypt')
 const r = require('rethinkdb')
 const jwt = require('jsonwebtoken')
-const decodeUser = require('../../application/utils/helpers').decodeUser
-const settings = require('../default_settings')
-const schema = require('../schema')
+const decodeUser = require('../utils/helpers').decodeUser
+const settings = require('../../config/default_settings')
+const schema = require('../../config/schema')
 const R = require('ramda')
 
 // passing a truthy param as 'force' will force authentication, even if disabled in settings. This is for unit testing purposes

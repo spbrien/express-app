@@ -1,9 +1,10 @@
 const routing = require('./routing')
-const auth = require('config/auth').authenticate()
-const token = require('config/auth').checkToken
+const auth = require('./auth').authenticate()
+const token = require('./auth').checkToken
 const jwt = require('jsonwebtoken')
 const cors = require('cors')
-const settings = require('config/default_settings')
+const db = require('./db')
+const settings = require('../config/default_settings')
 
 function factory(app, port) {
   return (config) => {
@@ -12,16 +13,16 @@ function factory(app, port) {
     }
 
     // Set up connection to rethinkdb
-    app.use(config.db.validate(config.schema), config.db.createConnection)
+    app.use(db.validate(config.schema), db.createConnection)
 
     // Set up Main Routing
     app.use('/api/v1', token, routing(config.schema))
 
     // close db connection
-    app.use(config.db.closeConnection)
+    app.use(db.closeConnection)
 
     // Auth endpoint for getting or exchanging JWTs
-    app.get('/auth', config.db.createConnection, auth, (req, res) => {
+    app.get('/auth', db.createConnection, auth, (req, res) => {
       const token = jwt.sign(req.user, app.get('secret'), { expiresIn: '2h' })
       res.json({
         success: true,

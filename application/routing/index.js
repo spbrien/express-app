@@ -1,7 +1,7 @@
 
 const express = require('express')
 const router = express.Router()
-const auth = require('../../config/auth').checkToken
+const auth = require('../auth').checkToken
 const parseRelation = require('../utils/helpers').parseRelation
 const co = require('co')
 

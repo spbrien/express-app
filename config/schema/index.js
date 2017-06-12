@@ -2,9 +2,9 @@
 const fs = require('fs')
 const path = require('path')
 const inflection = require('inflection')
-const config = require('config/db').dbConfig
-const utils = require('config/db/utils')
-const insert = require('config/db/methods/insert')
+const config = require('application/db').dbConfig
+const utils = require('application/db/utils')
+const insert = require('application/db/methods/insert')
 const settings = require('config/default_settings')
 const bcrypt = require('bcrypt')
 
