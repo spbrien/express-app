@@ -29,7 +29,7 @@ module.exports = fs
     if (resourceName === 'accounts' && settings.USERNAME && settings.PASSWORD) {
       bcrypt.hash(settings.PASSWORD, 10, (err, hash) => {
         if (err) throw err
-        insert(resourceName, { username: settings.USERNAME, password: hash }, connection)
+        insert(resourceName, { username: settings.USERNAME, password: hash, roles: ['admin'] }, connection)
       })
     }
   })

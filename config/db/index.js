@@ -57,8 +57,6 @@ function checkEtag(tableName, id, etag, connection) {
 
 
 function createConnection(req, res, next) {
-  console.log("RUNNING CREATE CONNECTION")
-
   r.connect(dbConfig)
   .then((connection) => {
     req.connection = connection
@@ -90,18 +88,14 @@ function createConnection(req, res, next) {
         .run(connection)
       },
     }
-
-    console.log("FINISHING CONNECTION PROMISE")
   })
   .finally(() => {
-    console.log('should be calling next now')
     next()
   })
 }
 
 
 function closeConnection(req, res, next) {
-  console.log("RUNNING CLOSE CONNECTION")
   req.connection.close()
   next()
 }

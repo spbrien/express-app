@@ -38,7 +38,6 @@ function getCount(tableName, connection) {
 function constructMeta(tableName, max_results, page, connection) {
   return co(function* () {
     const total = yield getCount(tableName, connection)
-    console.log(total)
     return {
       max_results,
       total,

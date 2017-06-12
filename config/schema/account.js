@@ -11,14 +11,22 @@ module.exports = {
       uniqueness: true,
       pattern: '^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$',
     },
+    roles: {
+      type: 'array',
+      items: { type: 'string', minLength: 1 }
+    },
     password: {
       type: 'string',
       minlength: 1,
       maxlength: 30,
     },
   },
-  allowedUsers: [],
-  allowedRoles: [],
+  auth: {
+    GET: {
+      allowedRoles: ['blah'],
+      allowedUsers: ['blah'],
+    },
+  },
   metadata: {
 
   },

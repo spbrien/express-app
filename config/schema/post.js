@@ -32,8 +32,12 @@ module.exports = {
       optional: true,
     },
   },
-  allowedUsers: [],
-  allowedRoles: [],
+  auth: {
+    GET: {
+      allowedRoles: [],
+      allowedUsers: [],
+    },
+  },
   metadata: {
 
   },
