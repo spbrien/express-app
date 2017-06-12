@@ -11,7 +11,7 @@ const md5 = require('md5')
 const settings = require('config/default_settings')
 
 // Settings
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 9000
 
 // Init Logging etc.
 app.use(morgan('dev'))
