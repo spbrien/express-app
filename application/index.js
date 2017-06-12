@@ -5,8 +5,11 @@ const jwt = require('jsonwebtoken')
 const cors = require('cors')
 const db = require('./db')
 const settings = require('../config/default_settings')
+const path = require('path')
+const ioFactory = require('./websockets')
 
 function factory(app, port) {
+
   return (config) => {
     if (settings.CORS) {
       app.use(cors())
@@ -31,9 +34,19 @@ function factory(app, port) {
       })
     })
 
+    // Static index
+    app.get('/', function(req, res) {
+      res.sendFile(path.join(__dirname + '/../index.html'))
+    })
+
     // Listen
      /* eslint-disable no-console */
-    app.listen(port, () => console.log(`Running on port ${port}\n`))
+    const server = app.listen(port, () => console.log(`Running on port ${port}\n`))
+    const io = require('socket.io').listen(server);
+
+    // Websockets
+    ioFactory(io)
+
     return app
   }
 }

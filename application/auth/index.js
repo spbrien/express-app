@@ -71,7 +71,7 @@ function checkToken(req, res, next) {
         }
       })
     } else res.status(401).send('Not Authorized')
-  } else res.status(401).send('Not Authorized')
+  } else next()
 }
 
 module.exports = {

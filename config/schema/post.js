@@ -18,7 +18,7 @@ module.exports = {
     title: {
       type: 'string',
       minLength: 1,
-      maxLength: 10,
+      maxLength: 100,
     },
     author: {
       type: 'string',
