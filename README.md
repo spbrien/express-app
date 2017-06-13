@@ -8,6 +8,7 @@ Uses RethinkDB, ExpressJS to automatically create an API from a configuration us
 * ExpressJS
 * [Schema Inspector](https://www.npmjs.com/package/schema-inspector)
 * [JSON Web Token](https://www.npmjs.com/package/jsonwebtoken)
+* [Socket.io](https://github.com/socketio/socket.io)
 * Bcrypt
 
 ## Features
