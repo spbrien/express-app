@@ -40,6 +40,7 @@ function authenticate(force) {
   }
 }
 
+// TODO: Enable restrict to creator policy
 function checkToken(req, res, next) {
   const resource = req.originalUrl.replace('/api/v1/', '').split('/')[0]
   const method = req.method
